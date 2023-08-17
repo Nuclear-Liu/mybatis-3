@@ -28,6 +28,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
+ * XML 文件节点描述对象.
+ *
  * @author Clinton Begin
  */
 public class XNode {
@@ -266,6 +268,11 @@ public class XNode {
     return children;
   }
 
+  /**
+   * 获取节点的子节点.
+   *
+   * @return {@link Properties}
+   */
   public Properties getChildrenAsProperties() {
     Properties properties = new Properties();
     for (XNode child : getChildren()) {

@@ -33,6 +33,8 @@ import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.io.Resources;
 
 /**
+ * 注册的类型别名.
+ *
  * @author Clinton Begin
  */
 public class TypeAliasRegistry {
@@ -108,6 +110,16 @@ public class TypeAliasRegistry {
     registerAlias("ResultSet", ResultSet.class);
   }
 
+  /**
+   * 别名解析. 如果 typeAliases 中不存在，则使用类路径通过类加载器寻找。
+   *
+   * @param string
+   *          别名或类路径
+   *
+   * @return
+   *
+   * @param <T>
+   */
   @SuppressWarnings("unchecked")
   // throws class cast exception as well if types cannot be assigned
   public <T> Class<T> resolveAlias(String string) {

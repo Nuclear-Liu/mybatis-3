@@ -39,13 +39,10 @@ import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
-import org.apache.ibatis.session.AutoMappingBehavior;
-import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.LocalCacheScope;
+import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeAliasRegistry;
 
 /**
  * @author Clinton Begin
@@ -53,6 +50,9 @@ import org.apache.ibatis.type.JdbcType;
  */
 public class XMLConfigBuilder extends BaseBuilder {
 
+  /**
+   * 表示配置文件是否已经被解析：默认值 <code>false</code> - 未解析
+   */
   private boolean parsed;
   private final XPathParser parser;
   private String environment;
@@ -94,6 +94,9 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   private XMLConfigBuilder(Class<? extends Configuration> configClass, XPathParser parser, String environment,
       Properties props) {
+    /**
+     * 反射创建 {@link Configuration} 对象，并绑定到父类属性
+     */
     super(newConfig(configClass));
     ErrorContext.instance().resource("SQL Mapper Configuration");
     this.configuration.setVariables(props);
@@ -102,46 +105,74 @@ public class XMLConfigBuilder extends BaseBuilder {
     this.parser = parser;
   }
 
+  /**
+   * 完成配置文件/映射文件的加载解析.
+   *
+   * @return {@link Configuration}
+   */
   public Configuration parse() {
     if (parsed) {
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");
     }
+    /* 更新配置文件为已解析：保证配置文件只被解析一次. */
     parsed = true;
+    /* 根据 dtd 模板文件定义，获取根节点:<code>/configuration</code>. */
     parseConfiguration(parser.evalNode("/configuration"));
     return configuration;
   }
 
+  /**
+   * 根据配置文件 dtd 定义解析配置文件；解析内容加载到 {@link Configuration} 对象中.
+   *
+   * @param root
+   *          配置文档根节点对象
+   */
   private void parseConfiguration(XNode root) {
     try {
       // issue #117 read properties first
       propertiesElement(root.evalNode("properties"));
       Properties settings = settingsAsProperties(root.evalNode("settings"));
+      /* 虚拟文件系统 Virtual File System */
       loadCustomVfs(settings);
+      /* 日志设置 */
       loadCustomLogImpl(settings);
+      /* 类型别名加载解析 */
       typeAliasesElement(root.evalNode("typeAliases"));
+      /* 插件加载解析 */
       pluginElement(root.evalNode("plugins"));
       objectFactoryElement(root.evalNode("objectFactory"));
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
+      /* <code>settings</code> 标签自定义设置与默认设置值合并 */
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
       environmentsElement(root.evalNode("environments"));
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
       typeHandlerElement(root.evalNode("typeHandlers"));
+      /* 配置文件中映射文件加载解析 & Mapper映射器解析映射文件 */
       mapperElement(root.evalNode("mappers"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
     }
   }
 
+  /**
+   * @param context
+   *          <code>setting</code>标签节点
+   *
+   * @return
+   */
   private Properties settingsAsProperties(XNode context) {
     if (context == null) {
+      /* 如果配置文件 <code>setting</code> 标签内容为空；设置空属性对象. */
       return new Properties();
     }
+    /* 获取配置文件 <code>setting</code> 标签内的所有子节点. */
     Properties props = context.getChildrenAsProperties();
     // Check that all settings are known to the configuration class
     MetaClass metaConfig = MetaClass.forClass(Configuration.class, localReflectorFactory);
     for (Object key : props.keySet()) {
+      /* 检查 setting 标签内属性是否合法： */
       if (!metaConfig.hasSetter(String.valueOf(key))) {
         throw new BuilderException(
             "The setting " + key + " is not known.  Make sure you spelled it correctly (case sensitive).");
@@ -169,6 +200,12 @@ public class XMLConfigBuilder extends BaseBuilder {
     configuration.setLogImpl(logImpl);
   }
 
+  /**
+   * 配置文件类型别名加载解析(结果存放在 {@link TypeAliasRegistry}).
+   *
+   * @param parent
+   *          类型别名标签对象
+   */
   private void typeAliasesElement(XNode parent) {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
@@ -193,6 +230,14 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 配置文件插件标签加载解析.
+   *
+   * @param parent
+   *          配置文件插件标签对象
+   *
+   * @throws Exception
+   */
   private void pluginElement(XNode parent) throws Exception {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
@@ -232,11 +277,21 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 解析配置文件中 <code>properties</code> 属性；解析结果保存到 <code>configuration</code> 对象中.
+   *
+   * @param context
+   *
+   * @throws Exception
+   */
   private void propertiesElement(XNode context) throws Exception {
     if (context != null) {
       Properties defaults = context.getChildrenAsProperties();
       String resource = context.getStringAttribute("resource");
       String url = context.getStringAttribute("url");
+      /**
+       * 属性 <code>resource</code> 与 <code>url</code> 不可以同时使用.
+       */
       if (resource != null && url != null) {
         throw new BuilderException(
             "The properties element cannot specify both a URL and a resource based property file reference.  Please specify one or the other.");
@@ -248,13 +303,25 @@ public class XMLConfigBuilder extends BaseBuilder {
       }
       Properties vars = configuration.getVariables();
       if (vars != null) {
+        /**
+         * 合并属性信息
+         */
         defaults.putAll(vars);
       }
       parser.setVariables(defaults);
+      /**
+       * 解析处的属性信息存储到 <code>configuration</code> 中.
+       */
       configuration.setVariables(defaults);
     }
   }
 
+  /**
+   * 配置文件 <code>settings</code> 标签内容合并(自定义与默认值).
+   *
+   * @param props
+   *          配置文件中自定义内容
+   */
   private void settingsElement(Properties props) {
     configuration
         .setAutoMappingBehavior(AutoMappingBehavior.valueOf(props.getProperty("autoMappingBehavior", "PARTIAL")));
@@ -292,6 +359,13 @@ public class XMLConfigBuilder extends BaseBuilder {
     configuration.setNullableOnForEach(booleanValueOf(props.getProperty("nullableOnForEach"), false));
   }
 
+  /**
+   * 配置文件数据源相关配置解析(事务工厂、数据源: {@link Environment}).
+   *
+   * @param context
+   *
+   * @throws Exception
+   */
   private void environmentsElement(XNode context) throws Exception {
     if (context != null) {
       if (environment == null) {
@@ -300,9 +374,13 @@ public class XMLConfigBuilder extends BaseBuilder {
       for (XNode child : context.getChildren()) {
         String id = child.getStringAttribute("id");
         if (isSpecifiedEnvironment(id)) {
+          /* 反射创建事务工厂 */
           TransactionFactory txFactory = transactionManagerElement(child.evalNode("transactionManager"));
+          /* 反射创建数据源工厂 */
           DataSourceFactory dsFactory = dataSourceElement(child.evalNode("dataSource"));
+          /* 创建数据源 */
           DataSource dataSource = dsFactory.getDataSource();
+          /* 包含事务工厂、数据源的 {@link Environment} 构建器 */
           Environment.Builder environmentBuilder = new Environment.Builder(id).transactionFactory(txFactory)
               .dataSource(dataSource);
           configuration.setEnvironment(environmentBuilder.build());
@@ -380,31 +458,41 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 配置文件 <code>mappers</code> 标签内容解析，Mapper 解析器解析映射文件内容.
+   *
+   * @param parent
+   *
+   * @throws Exception
+   */
   private void mapperElement(XNode parent) throws Exception {
     if (parent != null) {
+      /* 对所有子标签循环解析 */
       for (XNode child : parent.getChildren()) {
-        if ("package".equals(child.getName())) {
+        if ("package".equals(child.getName())) { /* 当前子标签为:<code>package</code> 标签 */
           String mapperPackage = child.getStringAttribute("name");
           configuration.addMappers(mapperPackage);
-        } else {
+        } else { /* 当前子标签为:<code>mapper</code> 标签 */
           String resource = child.getStringAttribute("resource");
           String url = child.getStringAttribute("url");
           String mapperClass = child.getStringAttribute("class");
-          if (resource != null && url == null && mapperClass == null) {
+          if (resource != null && url == null && mapperClass == null) { /* 根据 resource 内容加载解析 */
             ErrorContext.instance().resource(resource);
+            /* 获取映射文件输入流 */
             try (InputStream inputStream = Resources.getResourceAsStream(resource)) {
               XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource,
                   configuration.getSqlFragments());
+              /* 映射文件解析 */
               mapperParser.parse();
             }
-          } else if (resource == null && url != null && mapperClass == null) {
+          } else if (resource == null && url != null && mapperClass == null) { /* 根据 url 内容加载解析 */
             ErrorContext.instance().resource(url);
             try (InputStream inputStream = Resources.getUrlAsStream(url)) {
               XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url,
                   configuration.getSqlFragments());
               mapperParser.parse();
             }
-          } else if (resource == null && url == null && mapperClass != null) {
+          } else if (resource == null && url == null && mapperClass != null) { /* 根据 class 内容加载解析 */
             Class<?> mapperInterface = Resources.classForName(mapperClass);
             configuration.addMapper(mapperInterface);
           } else {
@@ -426,6 +514,13 @@ public class XMLConfigBuilder extends BaseBuilder {
     return environment.equals(id);
   }
 
+  /**
+   * 反射实例化 {@link Configuration} 对象.
+   *
+   * @param configClass
+   *
+   * @return
+   */
   private static Configuration newConfig(Class<? extends Configuration> configClass) {
     try {
       return configClass.getDeclaredConstructor().newInstance();

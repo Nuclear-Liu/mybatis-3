@@ -121,12 +121,34 @@ public class MapperBuilderAssistant extends BaseBuilder {
     }
   }
 
+  /**
+   * 创建缓存对象，对象绑定到 {@link Configuration} 对象中. namespace 为缓存id标识
+   *
+   * @param typeClass
+   *          缓存类实现类
+   * @param evictionClass
+   *          缓存淘汰策略类
+   * @param flushInterval
+   *          缓存刷新间隔
+   * @param size
+   *          缓存大小
+   * @param readWrite
+   *          是否支持读写
+   * @param blocking
+   *          并发阻塞
+   * @param props
+   *          属性配置
+   *
+   * @return
+   */
   public Cache useNewCache(Class<? extends Cache> typeClass, Class<? extends Cache> evictionClass, Long flushInterval,
       Integer size, boolean readWrite, boolean blocking, Properties props) {
     Cache cache = new CacheBuilder(currentNamespace).implementation(valueOrDefault(typeClass, PerpetualCache.class))
         .addDecorator(valueOrDefault(evictionClass, LruCache.class)).clearInterval(flushInterval).size(size)
         .readWrite(readWrite).blocking(blocking).properties(props).build();
+    /* 将 cache 对象以 namespace 为主键添加到 configuration#caches 中 */
     configuration.addCache(cache);
+    /* 记录当前 namespace 的 cache 对象 */
     currentCache = cache;
     return cache;
   }
@@ -195,6 +217,34 @@ public class MapperBuilderAssistant extends BaseBuilder {
     return new Discriminator.Builder(configuration, resultMapping, namespaceDiscriminatorMap).build();
   }
 
+  /**
+   * 配置文件中的 <code>select/insert/delete/update</code> 标签属性封装为 {@link MappedStatement} 对象；
+   * 并以映射文件 namespace + 标签属性 id(接口方法名) 为 key(namespace.id) 将对象添加到 {@link Configuration#mappedStatements}.
+   *
+   * @param id
+   * @param sqlSource
+   * @param statementType
+   * @param sqlCommandType
+   * @param fetchSize
+   * @param timeout
+   * @param parameterMap
+   * @param parameterType
+   * @param resultMap
+   * @param resultType
+   * @param resultSetType
+   * @param flushCache
+   * @param useCache
+   * @param resultOrdered
+   * @param keyGenerator
+   * @param keyProperty
+   * @param keyColumn
+   * @param databaseId
+   * @param lang
+   * @param resultSets
+   * @param dirtySelect
+   *
+   * @return
+   */
   public MappedStatement addMappedStatement(String id, SqlSource sqlSource, StatementType statementType,
       SqlCommandType sqlCommandType, Integer fetchSize, Integer timeout, String parameterMap, Class<?> parameterType,
       String resultMap, Class<?> resultType, ResultSetType resultSetType, boolean flushCache, boolean useCache,

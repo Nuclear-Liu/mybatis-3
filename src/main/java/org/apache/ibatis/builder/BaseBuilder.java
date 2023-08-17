@@ -29,6 +29,9 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * 抽象基础构建器: 配置信息-{@link Configuration} (配置文件中包含的)类型别名-{@link TypeAliasRegistry}
+ * (配置文件中包含的)类型处理器-{@link TypeHandlerRegistry} .
+ *
  * @author Clinton Begin
  */
 public abstract class BaseBuilder {

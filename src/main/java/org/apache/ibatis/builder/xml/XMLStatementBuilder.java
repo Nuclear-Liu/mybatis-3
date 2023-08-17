@@ -35,6 +35,7 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ *
  * @author Clinton Begin
  */
 public class XMLStatementBuilder extends BaseBuilder {
@@ -55,21 +56,35 @@ public class XMLStatementBuilder extends BaseBuilder {
     this.requiredDatabaseId = databaseId;
   }
 
+  /**
+   * 解析映射文件中单个 crud 标签内容
+   */
   public void parseStatementNode() {
+    /* id 属性，对应于 Mapper 接口中的方法名称 */
     String id = context.getStringAttribute("id");
+    /* 多数据源:数据源 */
     String databaseId = context.getStringAttribute("databaseId");
 
     if (!databaseIdMatchesCurrent(id, databaseId, this.requiredDatabaseId)) {
       return;
     }
 
+    /* 获取当前标签名称: select/insert/delete/update */
     String nodeName = context.getNode().getNodeName();
+    /* 获取当前标签具体的 SQL 命令类型 */
     SqlCommandType sqlCommandType = SqlCommandType.valueOf(nodeName.toUpperCase(Locale.ENGLISH));
+    /* 判断当前 SQL 命令类型是否为 SELECT 类型 */
     boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
+    /* 是否需要刷新缓存 */
     boolean flushCache = context.getBooleanAttribute("flushCache", !isSelect);
+    /* 是否使用到缓存 */
     boolean useCache = context.getBooleanAttribute("useCache", isSelect);
+    /* 结果是否排序 */
     boolean resultOrdered = context.getBooleanAttribute("resultOrdered", false);
 
+    /* 1. 解析 include 标签
+    * 2. 替换 include 标签
+    * 3. 解析 ${} EL 表达式 */
     // Include Fragments before parsing
     XMLIncludeTransformer includeParser = new XMLIncludeTransformer(configuration, builderAssistant);
     includeParser.applyIncludes(context.getNode());
@@ -94,7 +109,7 @@ public class XMLStatementBuilder extends BaseBuilder {
           configuration.isUseGeneratedKeys() && SqlCommandType.INSERT.equals(sqlCommandType))
               ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
     }
-
+/* 动态 SQL 加载解析 */
     SqlSource sqlSource = langDriver.createSqlSource(configuration, context, parameterTypeClass);
     StatementType statementType = StatementType
         .valueOf(context.getStringAttribute("statementType", StatementType.PREPARED.toString()));
@@ -117,6 +132,7 @@ public class XMLStatementBuilder extends BaseBuilder {
     String resultSets = context.getStringAttribute("resultSets");
     boolean dirtySelect = context.getBooleanAttribute("affectData", Boolean.FALSE);
 
+    /*  */
     builderAssistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType, fetchSize, timeout, parameterMap,
         parameterTypeClass, resultMap, resultTypeClass, resultSetTypeEnum, flushCache, useCache, resultOrdered,
         keyGenerator, keyProperty, keyColumn, databaseId, langDriver, resultSets, dirtySelect);

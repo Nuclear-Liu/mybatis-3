@@ -35,6 +35,8 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
 /**
+ * 缓存构造器.
+ *
  * @author Clinton Begin
  */
 public class CacheBuilder {
@@ -97,6 +99,7 @@ public class CacheBuilder {
     if (PerpetualCache.class.equals(cache.getClass())) {
       for (Class<? extends Cache> decorator : decorators) {
         cache = newCacheDecoratorInstance(decorator, cache);
+        /* 设置构建缓存对象的属性 */
         setCacheProperties(cache);
       }
       cache = setStandardDecorators(cache);
