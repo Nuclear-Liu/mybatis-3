@@ -29,6 +29,8 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * 配置文件中(select/insert/update/delete)标签的封装对象.
+ *
  * @author Clinton Begin
  */
 public final class MappedStatement {
@@ -41,6 +43,9 @@ public final class MappedStatement {
   private StatementType statementType;
   private ResultSetType resultSetType;
   private SqlSource sqlSource;
+  /**
+   * 缓存对象：如果映射文件配置了缓存，在配置文件加载时，将根据配置设置缓存对象.
+   */
   private Cache cache;
   private ParameterMap parameterMap;
   private List<ResultMap> resultMaps;

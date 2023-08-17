@@ -164,14 +164,16 @@ public class Configuration {
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
   /**
-   * key: namespce.id value: {@link MappedStatement} 描述一个 <code>select/insert/update/delete</code> 标签
+   * key: namespce.id.
+   * value: {@link MappedStatement} 描述一个 <code>select/insert/update/delete</code> 标签.
    */
   protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>(
       "Mapped Statements collection")
           .conflictMessageProducer((savedValue, targetValue) -> ". please check " + savedValue.getResource() + " and "
               + targetValue.getResource());
   /**
-   * key: namespace value: {@link Cache} 描述映射文件缓存对象
+   * key: namespace.
+   * value: {@link Cache} 描述映射文件缓存对象.
    */
   protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
   protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
@@ -491,6 +493,7 @@ public class Configuration {
 
   /**
    * 获取默认执行器类型: {@link ExecutorType#SIMPLE}.
+   *
    * @return
    */
   public ExecutorType getDefaultExecutorType() {
@@ -741,8 +744,11 @@ public class Configuration {
   /**
    * 根据事务对象 {@link Transaction} 与执行器类型 {@link ExecutorType} 创建执行器对象.
    *
-   * @param transaction 事务对象 {@link Transaction}
-   * @param executorType 执行器类型 {@link ExecutorType}
+   * @param transaction
+   *          事务对象 {@link Transaction}
+   * @param executorType
+   *          执行器类型 {@link ExecutorType}
+   *
    * @return {@link Executor}
    */
   public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
@@ -755,12 +761,12 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
-    /** 全局配置文件中的缓存开关，默认: true
-    * 1. 全局配置文件中 settings#cacheEnabled 中开启缓存：对 Executor 做缓存增强
-    * 2. 映射文件中 <cache> 标签：在 {@link Configuration#caches} 添加 {@link Cache} 对象
-     * */
+    /**
+     * 全局配置文件中的缓存开关，默认: true 1. 全局配置文件中 settings#cacheEnabled 中开启缓存：对 Executor 做缓存增强 2. 映射文件中 <cache> 标签：在
+     * {@link Configuration#caches} 添加 {@link Cache} 对象
+     */
     if (cacheEnabled) {
-      /* 装饰器模式：添加缓存增强*/
+      /* 装饰器模式：添加缓存增强 */
       executor = new CachingExecutor(executor);
     }
     /* 拦截器：植入增强逻辑 */

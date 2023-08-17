@@ -41,6 +41,16 @@ public interface Executor {
   <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler,
       CacheKey cacheKey, BoundSql boundSql) throws SQLException;
 
+  /**
+   * 执行 {@link MappedStatement}.
+   * @param ms {@link MappedStatement}
+   * @param parameter
+   * @param rowBounds
+   * @param resultHandler
+   * @return
+   * @param <E>
+   * @throws SQLException
+   */
   <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler)
       throws SQLException;
 

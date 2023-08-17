@@ -40,8 +40,8 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 /**
- * The default implementation for {@link SqlSession}. Note that this class is not Thread-Safe.
- * {@link SqlSession} 默认实现(该类不是线程安全类).
+ * The default implementation for {@link SqlSession}. Note that this class is not Thread-Safe. {@link SqlSession}
+ * 默认实现(该类不是线程安全类).
  *
  * @author Clinton Begin
  */
@@ -133,11 +133,17 @@ public class DefaultSqlSession implements SqlSession {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public <E> List<E> selectList(String statement) {
     return this.selectList(statement, null);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public <E> List<E> selectList(String statement, Object parameter) {
     return this.selectList(statement, parameter, RowBounds.DEFAULT);
@@ -148,8 +154,19 @@ public class DefaultSqlSession implements SqlSession {
     return selectList(statement, parameter, rowBounds, Executor.NO_RESULT_HANDLER);
   }
 
+  /**
+   * 根据 statement(namespace.id) 检索映射对象 list 集合.
+   *
+   * @param statement nasmespace.id
+   * @param parameter 条件参数
+   * @param rowBounds
+   * @param handler
+   * @return
+   * @param <E>
+   */
   private <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds, ResultHandler handler) {
     try {
+      /** {@link Configuration#mappedStatements}: 根据 statement 获取到映射文件中具体的一个(select/insert/update/delete)标签封装的对象. */
       MappedStatement ms = configuration.getMappedStatement(statement);
       dirty |= ms.isDirtySelect();
       return executor.query(ms, wrapCollection(parameter), rowBounds, handler);

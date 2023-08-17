@@ -27,6 +27,11 @@ import org.apache.ibatis.executor.BatchResult;
  * The primary Java interface for working with MyBatis. Through this interface you can execute commands, get mappers and
  * manage transactions.
  *
+ * MyBatis 数据库会话接口：
+ * 1. 执行命令
+ * 2. 获取映射器
+ * 3. 管理事务
+ *
  * @author Clinton Begin
  */
 public interface SqlSession extends Closeable {
@@ -59,11 +64,12 @@ public interface SqlSession extends Closeable {
 
   /**
    * Retrieve a list of mapped objects from the statement key.
+   * 根据 statement(namespace.id) 检索映射对象 list 集合.
    *
    * @param <E>
-   *          the returned list element type
+   *          the returned list element type 返回的 list 集合元素类型
    * @param statement
-   *          Unique identifier matching the statement to use.
+   *          Unique identifier matching the statement to use (namespace.id).
    *
    * @return List of mapped object
    */

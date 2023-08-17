@@ -84,17 +84,30 @@ public class CachingExecutor implements Executor {
     return delegate.queryCursor(ms, parameter, rowBounds);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler)
       throws SQLException {
+    /* 获取具体 sql 语句 */
     BoundSql boundSql = ms.getBoundSql(parameterObject);
+    /* 创建缓存 key */
     CacheKey key = createCacheKey(ms, parameterObject, rowBounds, boundSql);
     return query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler,
       CacheKey key, BoundSql boundSql) throws SQLException {
+    /**
+     * 获取 {@link Cache} 对象
+     * - 如果全局配置文件启动缓存，并且在具体的映射文件中设置了 <code>cache</code> 标签，
+     * 将在 {@link org.apache.ibatis.session.Configuration#mappedStatements} 中的 {@link MappedStatement#cache} 中设置关联的缓存对象
+     */
     Cache cache = ms.getCache();
     if (cache != null) {
       flushCacheIfRequired(ms);

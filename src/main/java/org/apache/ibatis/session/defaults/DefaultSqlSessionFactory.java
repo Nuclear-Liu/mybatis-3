@@ -93,9 +93,13 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
   /**
    * 创建 {@link SqlSession} 数据库会话对象.
    *
-   * @param execType 执行器类型
-   * @param level 事务隔离级别
-   * @param autoCommit 是否自动提交
+   * @param execType
+   *          执行器类型
+   * @param level
+   *          事务隔离级别
+   * @param autoCommit
+   *          是否自动提交
+   *
    * @return {@link SqlSession}
    */
   private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level,
@@ -144,7 +148,9 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
   /**
    * 通过 {@link Environment} 获取事务工厂，如果没有指定则返回 {@link ManagedTransactionFactory} 工厂对象.
    *
-   * @param environment {@link Configuration#environment}
+   * @param environment
+   *          {@link Configuration#environment}
+   *
    * @return
    */
   private TransactionFactory getTransactionFactoryFromEnvironment(Environment environment) {
