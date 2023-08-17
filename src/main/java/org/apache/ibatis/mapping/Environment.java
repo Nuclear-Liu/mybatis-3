@@ -26,6 +26,9 @@ import org.apache.ibatis.transaction.TransactionFactory;
  */
 public final class Environment {
   private final String id;
+  /**
+   * 事务工厂.
+   */
   private final TransactionFactory transactionFactory;
   private final DataSource dataSource;
 

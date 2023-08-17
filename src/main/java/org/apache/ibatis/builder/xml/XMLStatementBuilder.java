@@ -35,7 +35,6 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 /**
- *
  * @author Clinton Begin
  */
 public class XMLStatementBuilder extends BaseBuilder {
@@ -82,9 +81,9 @@ public class XMLStatementBuilder extends BaseBuilder {
     /* 结果是否排序 */
     boolean resultOrdered = context.getBooleanAttribute("resultOrdered", false);
 
-    /* 1. 解析 include 标签
-    * 2. 替换 include 标签
-    * 3. 解析 ${} EL 表达式 */
+    /*
+     * 1. 解析 include 标签 2. 替换 include 标签 3. 解析 ${} EL 表达式
+     */
     // Include Fragments before parsing
     XMLIncludeTransformer includeParser = new XMLIncludeTransformer(configuration, builderAssistant);
     includeParser.applyIncludes(context.getNode());
@@ -109,7 +108,7 @@ public class XMLStatementBuilder extends BaseBuilder {
           configuration.isUseGeneratedKeys() && SqlCommandType.INSERT.equals(sqlCommandType))
               ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
     }
-/* 动态 SQL 加载解析 */
+    /* 动态 SQL 加载解析 */
     SqlSource sqlSource = langDriver.createSqlSource(configuration, context, parameterTypeClass);
     StatementType statementType = StatementType
         .valueOf(context.getStringAttribute("statementType", StatementType.PREPARED.toString()));

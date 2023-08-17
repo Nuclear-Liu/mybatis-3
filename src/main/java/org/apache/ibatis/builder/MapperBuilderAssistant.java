@@ -218,8 +218,8 @@ public class MapperBuilderAssistant extends BaseBuilder {
   }
 
   /**
-   * 配置文件中的 <code>select/insert/delete/update</code> 标签属性封装为 {@link MappedStatement} 对象；
-   * 并以映射文件 namespace + 标签属性 id(接口方法名) 为 key(namespace.id) 将对象添加到 {@link Configuration#mappedStatements}.
+   * 配置文件中的 <code>select/insert/delete/update</code> 标签属性封装为 {@link MappedStatement} 对象； 并以映射文件 namespace + 标签属性
+   * id(接口方法名) 为 key(namespace.id) 将对象添加到 {@link Configuration#mappedStatements}.
    *
    * @param id
    * @param sqlSource

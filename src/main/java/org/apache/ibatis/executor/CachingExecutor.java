@@ -33,6 +33,8 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
+ * 缓存增强执行器.
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  */

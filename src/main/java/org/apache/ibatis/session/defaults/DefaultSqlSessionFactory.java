@@ -42,6 +42,9 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     this.configuration = configuration;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public SqlSession openSession() {
     return openSessionFromDataSource(configuration.getDefaultExecutorType(), null, false);
@@ -87,14 +90,26 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     return configuration;
   }
 
+  /**
+   * 创建 {@link SqlSession} 数据库会话对象.
+   *
+   * @param execType 执行器类型
+   * @param level 事务隔离级别
+   * @param autoCommit 是否自动提交
+   * @return {@link SqlSession}
+   */
   private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level,
       boolean autoCommit) {
     Transaction tx = null;
     try {
       final Environment environment = configuration.getEnvironment();
+      /* 获取事务工厂 */
       final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
+      /* 创建事务对象 */
       tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);
+      /* 根据事务对象与执行器类型创建执行器 {@link Executor} */
       final Executor executor = configuration.newExecutor(tx, execType);
+      /* 创建默认数据库会话对象 */
       return new DefaultSqlSession(configuration, executor, autoCommit);
     } catch (Exception e) {
       closeTransaction(tx); // may have fetched a connection so lets call close()
@@ -126,6 +141,12 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     }
   }
 
+  /**
+   * 通过 {@link Environment} 获取事务工厂，如果没有指定则返回 {@link ManagedTransactionFactory} 工厂对象.
+   *
+   * @param environment {@link Configuration#environment}
+   * @return
+   */
   private TransactionFactory getTransactionFactoryFromEnvironment(Environment environment) {
     if (environment == null || environment.getTransactionFactory() == null) {
       return new ManagedTransactionFactory();

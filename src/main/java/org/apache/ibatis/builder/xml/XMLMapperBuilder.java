@@ -160,8 +160,10 @@ public class XMLMapperBuilder extends BaseBuilder {
   /**
    * 根据数据源解析配置文件中所有的 crud 标签内容.
    *
-   * @param list 配置文件crud标签内容
-   * @param requiredDatabaseId 数据源
+   * @param list
+   *          配置文件crud标签内容
+   * @param requiredDatabaseId
+   *          数据源
    */
   private void buildStatementFromContext(List<XNode> list, String requiredDatabaseId) {
     for (XNode context : list) {
