@@ -164,16 +164,14 @@ public class Configuration {
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
   /**
-   * key: namespce.id.
-   * value: {@link MappedStatement} 描述一个 <code>select/insert/update/delete</code> 标签.
+   * key: namespce.id. value: {@link MappedStatement} 描述一个 <code>select/insert/update/delete</code> 标签.
    */
   protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>(
       "Mapped Statements collection")
           .conflictMessageProducer((savedValue, targetValue) -> ". please check " + savedValue.getResource() + " and "
               + targetValue.getResource());
   /**
-   * key: namespace.
-   * value: {@link Cache} 描述映射文件缓存对象.
+   * key: namespace. value: {@link Cache} 描述映射文件缓存对象.
    */
   protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
   protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");

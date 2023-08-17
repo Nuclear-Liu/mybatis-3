@@ -157,11 +157,15 @@ public class DefaultSqlSession implements SqlSession {
   /**
    * 根据 statement(namespace.id) 检索映射对象 list 集合.
    *
-   * @param statement nasmespace.id
-   * @param parameter 条件参数
+   * @param statement
+   *          nasmespace.id
+   * @param parameter
+   *          条件参数
    * @param rowBounds
    * @param handler
+   *
    * @return
+   *
    * @param <E>
    */
   private <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds, ResultHandler handler) {

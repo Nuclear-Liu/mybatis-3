@@ -43,12 +43,17 @@ public interface Executor {
 
   /**
    * 执行 {@link MappedStatement}.
-   * @param ms {@link MappedStatement}
+   *
+   * @param ms
+   *          {@link MappedStatement}
    * @param parameter
    * @param rowBounds
    * @param resultHandler
+   *
    * @return
+   *
    * @param <E>
+   *
    * @throws SQLException
    */
   <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler)
