@@ -114,7 +114,10 @@ public class CachingExecutor implements Executor {
       /* 标签内配置了 useCache 属性 并且 resultHandler 为 null */
       if (ms.isUseCache() && resultHandler == null) {
         ensureNoOutParams(ms, boundSql);
-        /** 通过二级缓存获取数据: 缓存通过 {@link TransactionalCacheManager} {@link org.apache.ibatis.cache.decorators.TransactionalCache} 管理 */
+        /**
+         * 通过二级缓存获取数据: 缓存通过 {@link TransactionalCacheManager}
+         * {@link org.apache.ibatis.cache.decorators.TransactionalCache} 管理
+         */
         @SuppressWarnings("unchecked")
         List<E> list = (List<E>) tcm.getObject(cache, key);
         if (list == null) { /* 缓存未命中 */
