@@ -109,13 +109,18 @@ public class CachingExecutor implements Executor {
      */
     Cache cache = ms.getCache();
     if (cache != null) {
+      /* 是否需要刷新 清空一二级缓存 */
       flushCacheIfRequired(ms);
+      /* 标签内配置了 useCache 属性 并且 resultHandler 为 null */
       if (ms.isUseCache() && resultHandler == null) {
         ensureNoOutParams(ms, boundSql);
+        /** 通过二级缓存获取数据: 缓存通过 {@link TransactionalCacheManager} {@link org.apache.ibatis.cache.decorators.TransactionalCache} 管理 */
         @SuppressWarnings("unchecked")
         List<E> list = (List<E>) tcm.getObject(cache, key);
-        if (list == null) {
+        if (list == null) { /* 缓存未命中 */
+          /* 执行器执行查询，获取数据 */
           list = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
+          /* 将查询结果写入缓存 */
           tcm.putObject(cache, key, list); // issue #578 and #116
         }
         return list;

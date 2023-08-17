@@ -140,6 +140,9 @@ public abstract class BaseExecutor implements Executor {
     return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @SuppressWarnings("unchecked")
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler,
@@ -149,15 +152,19 @@ public abstract class BaseExecutor implements Executor {
       throw new ExecutorException("Executor was closed.");
     }
     if (queryStack == 0 && ms.isFlushCacheRequired()) {
+      /* 清空一级缓存 */
       clearLocalCache();
     }
     List<E> list;
     try {
       queryStack++;
+      /* 查询一级缓存 */
       list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
       if (list != null) {
+        /* 缓存命中 */
         handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
       } else {
+        /* 一级缓存未命中，查询数据库中数据 */
         list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
       }
     } finally {
