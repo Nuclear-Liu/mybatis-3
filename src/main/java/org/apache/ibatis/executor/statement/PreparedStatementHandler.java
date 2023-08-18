@@ -42,6 +42,16 @@ public class PreparedStatementHandler extends BaseStatementHandler {
     super(executor, mappedStatement, parameter, rowBounds, resultHandler, boundSql);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @param statement
+   *          {@link PreparedStatement}'s object implement jdbc's {@link Statement}
+   *
+   * @return
+   *
+   * @throws SQLException
+   */
   @Override
   public int update(Statement statement) throws SQLException {
     PreparedStatement ps = (PreparedStatement) statement;

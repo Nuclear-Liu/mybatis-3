@@ -214,7 +214,9 @@ public class DefaultSqlSession implements SqlSession {
   @Override
   public int update(String statement, Object parameter) {
     try {
+      /* 与事务有关 */
       dirty = true;
+      /* 获取执行语句的描述 */
       MappedStatement ms = configuration.getMappedStatement(statement);
       return executor.update(ms, wrapCollection(parameter));
     } catch (Exception e) {
@@ -229,6 +231,9 @@ public class DefaultSqlSession implements SqlSession {
     return update(statement, null);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public int delete(String statement, Object parameter) {
     return update(statement, parameter);
@@ -308,6 +313,9 @@ public class DefaultSqlSession implements SqlSession {
     return configuration;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public <T> T getMapper(Class<T> type) {
     return configuration.getMapper(type, this);

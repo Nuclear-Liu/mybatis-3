@@ -54,9 +54,17 @@ public class MapperMethod {
     this.method = new MethodSignature(config, mapperInterface, method);
   }
 
+  /**
+   * 执行具体 SQL 内容.
+   *
+   * @param sqlSession
+   * @param args
+   *
+   * @return
+   */
   public Object execute(SqlSession sqlSession, Object[] args) {
     Object result;
-    switch (command.getType()) {
+    switch (command.getType()) { /* 根据 SQL 语句的类型(标签名字)调用 SqlSession 对应的方法 */
       case INSERT: {
         Object param = method.convertArgsToSqlCommandParam(args);
         result = rowCountResult(sqlSession.insert(command.getName(), param));

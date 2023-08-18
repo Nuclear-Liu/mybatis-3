@@ -361,6 +361,9 @@ public interface SqlSession extends Closeable {
 
   /**
    * Retrieves a mapper.
+   * <p>
+   * 获取映射器代理对象.
+   * </p>
    *
    * @param <T>
    *          the mapper type

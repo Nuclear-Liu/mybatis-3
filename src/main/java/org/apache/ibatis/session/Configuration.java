@@ -943,6 +943,18 @@ public class Configuration {
     mapperRegistry.addMapper(type);
   }
 
+  /**
+   * 获取映射器接口代理对象.
+   *
+   * @param type
+   *          接口类
+   * @param sqlSession
+   *          数据库会话对象
+   *
+   * @return
+   *
+   * @param <T>
+   */
   public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
     return mapperRegistry.getMapper(type, sqlSession);
   }

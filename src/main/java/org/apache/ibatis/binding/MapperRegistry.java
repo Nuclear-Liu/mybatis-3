@@ -40,13 +40,27 @@ public class MapperRegistry {
     this.config = config;
   }
 
+  /**
+   * 获取映射器接口的代理对象.
+   *
+   * @param type
+   *          映射接口
+   * @param sqlSession
+   *          数据库连接对象
+   *
+   * @return
+   *
+   * @param <T>
+   */
   @SuppressWarnings("unchecked")
   public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+    /** 映射器代理工厂: 用于创建映射器的代理对象 */
     final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
     if (mapperProxyFactory == null) {
       throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
     }
     try {
+      /** 反射创建映射器代理对象，并填充数据库会话属性. */
       return mapperProxyFactory.newInstance(sqlSession);
     } catch (Exception e) {
       throw new BindingException("Error getting mapper instance. Cause: " + e, e);

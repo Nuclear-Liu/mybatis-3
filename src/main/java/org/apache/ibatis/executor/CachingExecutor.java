@@ -72,8 +72,12 @@ public class CachingExecutor implements Executor {
     return delegate.isClosed();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public int update(MappedStatement ms, Object parameterObject) throws SQLException {
+    /* 对缓存是否刷新 默认:ture */
     flushCacheIfRequired(ms);
     return delegate.update(ms, parameterObject);
   }
