@@ -182,6 +182,9 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   //
   // HANDLE RESULT SETS
   //

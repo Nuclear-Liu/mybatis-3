@@ -67,7 +67,9 @@ public abstract class BaseStatementHandler implements StatementHandler {
 
     this.boundSql = boundSql;
 
+    /* 处理参数填充 */
     this.parameterHandler = configuration.newParameterHandler(mappedStatement, parameterObject, boundSql);
+    /* 处理结果集封装到对象 */
     this.resultSetHandler = configuration.newResultSetHandler(executor, mappedStatement, rowBounds, parameterHandler,
         resultHandler, boundSql);
   }
@@ -82,6 +84,9 @@ public abstract class BaseStatementHandler implements StatementHandler {
     return parameterHandler;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Statement prepare(Connection connection, Integer transactionTimeout) throws SQLException {
     ErrorContext.instance().sql(boundSql.getSql());
@@ -100,6 +105,16 @@ public abstract class BaseStatementHandler implements StatementHandler {
     }
   }
 
+  /**
+   * 根据连接对象 {@link Connection} 创建 {@link Statement} 对象.
+   *
+   * @param connection
+   *          {@link Connection}
+   *
+   * @return {@link Statement} 接口具体子类
+   *
+   * @throws SQLException
+   */
   protected abstract Statement instantiateStatement(Connection connection) throws SQLException;
 
   protected void setStatementTimeout(Statement stmt, Integer transactionTimeout) throws SQLException {

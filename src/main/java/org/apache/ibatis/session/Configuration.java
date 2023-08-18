@@ -718,6 +718,7 @@ public class Configuration {
       BoundSql boundSql) {
     ParameterHandler parameterHandler = mappedStatement.getLang().createParameterHandler(mappedStatement,
         parameterObject, boundSql);
+    /* 植入增强 */
     return (ParameterHandler) interceptorChain.pluginAll(parameterHandler);
   }
 
@@ -725,13 +726,25 @@ public class Configuration {
       ParameterHandler parameterHandler, ResultHandler resultHandler, BoundSql boundSql) {
     ResultSetHandler resultSetHandler = new DefaultResultSetHandler(executor, mappedStatement, parameterHandler,
         resultHandler, boundSql, rowBounds);
+    /* 植入增强 */
     return (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
   }
 
+  /**
+   * @param executor
+   * @param mappedStatement
+   * @param parameterObject
+   * @param rowBounds
+   * @param resultHandler
+   * @param boundSql
+   *
+   * @return
+   */
   public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement,
       Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
     StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject,
         rowBounds, resultHandler, boundSql);
+    /** 拦截器：完成植入、增强 */
     return (StatementHandler) interceptorChain.pluginAll(statementHandler);
   }
 

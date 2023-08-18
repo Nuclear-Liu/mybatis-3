@@ -45,6 +45,8 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * 执行器抽象模板类. 使用模板模式: {@link SimpleExecutor} {@link ReuseExecutor} {@link BatchExecutor}
+ *
  * @author Clinton Begin
  */
 public abstract class BaseExecutor implements Executor {
@@ -284,6 +286,21 @@ public abstract class BaseExecutor implements Executor {
 
   protected abstract List<BatchResult> doFlushStatements(boolean isRollback) throws SQLException;
 
+  /**
+   * 具体执行查询.
+   *
+   * @param ms
+   * @param parameter
+   * @param rowBounds
+   * @param resultHandler
+   * @param boundSql
+   *
+   * @return
+   *
+   * @param <E>
+   *
+   * @throws SQLException
+   */
   protected abstract <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds,
       ResultHandler resultHandler, BoundSql boundSql) throws SQLException;
 
@@ -335,9 +352,28 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
+  /**
+   * 从数据库中查询.
+   *
+   * @param ms
+   * @param parameter
+   * @param rowBounds
+   * @param resultHandler
+   * @param key
+   * @param boundSql
+   *
+   * @return
+   *
+   * @param <E>
+   *
+   * @throws SQLException
+   */
   private <E> List<E> queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds,
       ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
     List<E> list;
+    /**
+     * 在一级缓存中占位：表示一级缓存中将会有，已经在查询数据库过程中，避免后来查询在一级缓存中不命中导致继续查询数据，增加数据库负担
+     */
     localCache.putObject(key, EXECUTION_PLACEHOLDER);
     try {
       list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);

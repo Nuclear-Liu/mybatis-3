@@ -74,6 +74,15 @@ public class SqlSessionFactoryBuilder {
     return build(inputStream, null, properties);
   }
 
+  /**
+   * 解析配置文件与映射文件，
+   *
+   * @param inputStream
+   * @param environment
+   * @param properties
+   *
+   * @return
+   */
   public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
     try {
       XMLConfigBuilder parser = new XMLConfigBuilder(inputStream, environment, properties);
@@ -94,7 +103,12 @@ public class SqlSessionFactoryBuilder {
   }
 
   /**
-   * 完成 {@link DefaultSqlSessionFactory} 对象创建 {@link Configuration}
+   * 根据 {@link Configuration} 对象创建默认数据库会话工厂对象 {@link DefaultSqlSessionFactory} .
+   *
+   * @param config
+   *          配置文件与映射文件解析结果对象: {@link Configuration}
+   *
+   * @return
    */
   public SqlSessionFactory build(Configuration config) {
     return new DefaultSqlSessionFactory(config);

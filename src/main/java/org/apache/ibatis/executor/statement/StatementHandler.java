@@ -26,10 +26,20 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.session.ResultHandler;
 
 /**
+ * {@link Statement} 的处理器.
+ *
  * @author Clinton Begin
  */
 public interface StatementHandler {
 
+  /**
+   * @param connection
+   * @param transactionTimeout
+   *
+   * @return
+   *
+   * @throws SQLException
+   */
   Statement prepare(Connection connection, Integer transactionTimeout) throws SQLException;
 
   void parameterize(Statement statement) throws SQLException;
@@ -38,6 +48,20 @@ public interface StatementHandler {
 
   int update(Statement statement) throws SQLException;
 
+  /**
+   * 执行查询.
+   *
+   * @param statement
+   *          jdbc {@link Statement} 接口具体实现类
+   * @param resultHandler
+   *          查询结果处理器
+   *
+   * @return
+   *
+   * @param <E>
+   *
+   * @throws SQLException
+   */
   <E> List<E> query(Statement statement, ResultHandler resultHandler) throws SQLException;
 
   <E> Cursor<E> queryCursor(Statement statement) throws SQLException;

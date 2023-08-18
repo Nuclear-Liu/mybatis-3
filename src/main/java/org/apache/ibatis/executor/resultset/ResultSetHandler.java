@@ -1,5 +1,5 @@
 /*
- *    Copyright 2009-2022 the original author or authors.
+ *    Copyright 2009-2023 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -27,10 +27,40 @@ import org.apache.ibatis.cursor.Cursor;
  */
 public interface ResultSetHandler {
 
+  /**
+   * 处理结果集，生成结果为集合.
+   *
+   * @param stmt
+   *          jdbc's {@link Statement} 接口具体对象
+   *
+   * @return
+   *
+   * @param <E>
+   *
+   * @throws SQLException
+   */
   <E> List<E> handleResultSets(Statement stmt) throws SQLException;
 
+  /**
+   * 处理结果集，生成结果为游标对象
+   *
+   * @param stmt
+   *
+   * @return
+   *
+   * @param <E>
+   *
+   * @throws SQLException
+   */
   <E> Cursor<E> handleCursorResultSets(Statement stmt) throws SQLException;
 
+  /**
+   * 处理结果集，针对存储过程输出.
+   *
+   * @param cs
+   *
+   * @throws SQLException
+   */
   void handleOutputParameters(CallableStatement cs) throws SQLException;
 
 }

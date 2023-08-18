@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.ibatis.cursor.Cursor;
+import org.apache.ibatis.executor.statement.PreparedStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.mapping.BoundSql;
@@ -53,15 +54,27 @@ public class SimpleExecutor extends BaseExecutor {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler,
       BoundSql boundSql) throws SQLException {
+    /**
+     * 具体数据库操作 JDBC 核心对象: 1. Connection - 2. Statement - 用于执行静态 SQL 语句并返回其结果对象 3. PreparedStatement -
+     */
     Statement stmt = null;
     try {
       Configuration configuration = ms.getConfiguration();
+      /**
+       * 默认创建的是: {@link PreparedStatementHandler} 同时完成 {@link org.apache.ibatis.executor.parameter.ParameterHandler}
+       * {@link org.apache.ibatis.executor.resultset.ResultSetHandler} 的实例化
+       */
       StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler,
           boundSql);
+      /** 获取 jdbc {@link Statement} 接口对象 */
       stmt = prepareStatement(handler, ms.getStatementLog());
+      /** 执行查询 */
       return handler.query(stmt, resultHandler);
     } finally {
       closeStatement(stmt);
@@ -86,6 +99,7 @@ public class SimpleExecutor extends BaseExecutor {
 
   private Statement prepareStatement(StatementHandler handler, Log statementLog) throws SQLException {
     Statement stmt;
+    /** 获取 jdbc 连接对象 */
     Connection connection = getConnection(statementLog);
     stmt = handler.prepare(connection, transaction.getTimeout());
     handler.parameterize(stmt);

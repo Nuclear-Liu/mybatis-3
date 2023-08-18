@@ -59,10 +59,18 @@ public class PreparedStatementHandler extends BaseStatementHandler {
     ps.addBatch();
   }
 
+  /**
+   * {@inheritDoc}
+   * <p>
+   * {@link Statement} is a {@link PreparedStatement}
+   * </p>
+   */
   @Override
   public <E> List<E> query(Statement statement, ResultHandler resultHandler) throws SQLException {
     PreparedStatement ps = (PreparedStatement) statement;
+    /** 执行 {@link PreparedStatement} 对象中的 SQL 语句 */
     ps.execute();
+    /* 处理结果集 */
     return resultSetHandler.handleResultSets(ps);
   }
 
@@ -73,6 +81,12 @@ public class PreparedStatementHandler extends BaseStatementHandler {
     return resultSetHandler.handleCursorResultSets(ps);
   }
 
+  /**
+   * {@inheritDoc}
+   * <p>
+   * 使用 {@link Connection#prepareStatement(String)} 创建 {@link Statement} 的具体子类 {@link PreparedStatement}.
+   * </p>
+   */
   @Override
   protected Statement instantiateStatement(Connection connection) throws SQLException {
     String sql = boundSql.getSql();
