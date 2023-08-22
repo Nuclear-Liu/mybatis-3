@@ -143,9 +143,17 @@ public class MapperBuilderAssistant extends BaseBuilder {
    */
   public Cache useNewCache(Class<? extends Cache> typeClass, Class<? extends Cache> evictionClass, Long flushInterval,
       Integer size, boolean readWrite, boolean blocking, Properties props) {
-    Cache cache = new CacheBuilder(currentNamespace).implementation(valueOrDefault(typeClass, PerpetualCache.class))
-        .addDecorator(valueOrDefault(evictionClass, LruCache.class)).clearInterval(flushInterval).size(size)
-        .readWrite(readWrite).blocking(blocking).properties(props).build();
+    /**
+     * 建造者模式构建缓存容器对象.
+     */
+    Cache cache = new CacheBuilder(currentNamespace) // 指定命名空间隔离
+        .implementation(valueOrDefault(typeClass, PerpetualCache.class)) // 指定缓存实现类
+        .addDecorator(valueOrDefault(evictionClass, LruCache.class)) // 指定装饰器 默认 LRU
+        .clearInterval(flushInterval).size(size) // 指定刷新间隔
+        .readWrite(readWrite) // 指定读写属性
+        .blocking(blocking) // 指定是否阻塞
+        .properties(props) // 设置属性
+        .build();
     /* 将 cache 对象以 namespace 为主键添加到 configuration#caches 中 */
     configuration.addCache(cache);
     /* 记录当前 namespace 的 cache 对象 */

@@ -40,12 +40,18 @@ import org.apache.ibatis.reflection.SystemMetaObject;
  * @author Clinton Begin
  */
 public class CacheBuilder {
+  /**
+   * namespace
+   */
   private final String id;
   private Class<? extends Cache> implementation;
   private final List<Class<? extends Cache>> decorators;
   private Integer size;
   private Long clearInterval;
   private boolean readWrite;
+  /**
+   * 映射文件中缓存相关的配置属性.
+   */
   private Properties properties;
   private boolean blocking;
 
@@ -91,24 +97,45 @@ public class CacheBuilder {
     return this;
   }
 
+  /**
+   * 构建缓存容器对象，如果是 MyBatis 提供的响应缓存实现做响应的装饰增强；如果是自定义缓存实现，不会进行任何装饰器的缓存增强.
+   *
+   * @return
+   */
   public Cache build() {
+    /** 如果没有指定 {@link CacheBuilder#implementation} 设置默认实现 */
     setDefaultImplementations();
+    /**
+     * 创建基础缓存实例
+     */
     Cache cache = newBaseCacheInstance(implementation, id);
+    /** 设置映射配置文件属性到缓存容器对象 */
     setCacheProperties(cache);
     // issue #352, do not apply decorators to custom caches
+    /**
+     * 如果是默认 {@link PerpetualCache} 实现.
+     */
     if (PerpetualCache.class.equals(cache.getClass())) {
+      /**
+       * 遍历装饰器中的每个装饰器，默认包含 {@link LruCache}.
+       */
       for (Class<? extends Cache> decorator : decorators) {
         cache = newCacheDecoratorInstance(decorator, cache);
-        /* 设置构建缓存对象的属性 */
+        /** 设置构建装饰后缓存容器对象的属性 */
         setCacheProperties(cache);
       }
+      /** 设置 MyBatis 中的标准装饰器 */
       cache = setStandardDecorators(cache);
     } else if (!LoggingCache.class.isAssignableFrom(cache.getClass())) {
+      /** 如果是日志类型：设置日志装饰器 {@link LoggingCache} */
       cache = new LoggingCache(cache);
     }
     return cache;
   }
 
+  /**
+   * 当 {@link CacheBuilder#implementation} 没有设置，使用默认设置.
+   */
   private void setDefaultImplementations() {
     if (implementation == null) {
       implementation = PerpetualCache.class;
@@ -118,6 +145,13 @@ public class CacheBuilder {
     }
   }
 
+  /**
+   * 设置 MyBatis 中的默认装饰器.
+   *
+   * @param cache
+   *
+   * @return
+   */
   private Cache setStandardDecorators(Cache cache) {
     try {
       MetaObject metaCache = SystemMetaObject.forObject(cache);
@@ -142,8 +176,17 @@ public class CacheBuilder {
     }
   }
 
+  /**
+   * 设置映射文件中配置的缓存属性到缓存容器对象.
+   *
+   * @param cache
+   *          缓存容器对象
+   */
   private void setCacheProperties(Cache cache) {
     if (properties != null) {
+      /**
+       * cache 对象转换为 {@link MetaObject}.
+       */
       MetaObject metaCache = SystemMetaObject.forObject(cache);
       for (Map.Entry<Object, Object> entry : properties.entrySet()) {
         String name = (String) entry.getKey();
@@ -182,15 +225,34 @@ public class CacheBuilder {
     }
   }
 
+  /**
+   * 反射创建基础缓存容器实例.
+   *
+   * @param cacheClass
+   *          缓存容器实现类
+   * @param id
+   *          namespace
+   *
+   * @return
+   */
   private Cache newBaseCacheInstance(Class<? extends Cache> cacheClass, String id) {
     Constructor<? extends Cache> cacheConstructor = getBaseCacheConstructor(cacheClass);
     try {
+      /* 设置命名空间 */
       return cacheConstructor.newInstance(id);
     } catch (Exception e) {
       throw new CacheException("Could not instantiate cache implementation (" + cacheClass + "). Cause: " + e, e);
     }
   }
 
+  /**
+   * 反射获取构造函数.
+   *
+   * @param cacheClass
+   *          缓存容器实现类
+   *
+   * @return
+   */
   private Constructor<? extends Cache> getBaseCacheConstructor(Class<? extends Cache> cacheClass) {
     try {
       return cacheClass.getConstructor(String.class);

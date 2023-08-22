@@ -46,6 +46,10 @@ class BlockingCacheTest {
         "org/apache/ibatis/submitted/blocking_cache/CreateDB.sql");
   }
 
+  /**
+   * 每次查询阻塞 500 毫秒：如果没有阻塞，实际花费时间将 < 2*500ms，并且 ≈ 500ms； 如果阻塞查询，将阻塞第二次的查询，直到第一次的 500ms 过后，第二个线程获得锁查询对象再次阻塞 500ms，时间开销将 >
+   * 1000ms.
+   */
   @Test
   void testBlockingCache() {
     ExecutorService defaultThreadPool = Executors.newFixedThreadPool(2);

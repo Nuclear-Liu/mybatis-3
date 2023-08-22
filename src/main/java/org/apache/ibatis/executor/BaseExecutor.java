@@ -154,6 +154,9 @@ public abstract class BaseExecutor implements Executor {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
+    /**
+     * queryStack: 查询栈(深度)，涉及到多条语句查询是保证后来查询能够正确等待缓存有效.
+     */
     if (queryStack == 0 && ms.isFlushCacheRequired()) {
       /* 清空一级缓存 */
       clearLocalCache();
@@ -207,16 +210,26 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql) {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
     CacheKey cacheKey = new CacheKey();
+    /**
+     * <code>namespace.method_name</code>
+     */
     cacheKey.update(ms.getId());
+    /** {@link RowBounds#offset} */
     cacheKey.update(rowBounds.getOffset());
+    /** {@link RowBounds#limit} */
     cacheKey.update(rowBounds.getLimit());
+    /** {@link BoundSql#sql} */
     cacheKey.update(boundSql.getSql());
+    /** SQL 查询参数映射: {@link BoundSql#parameterMappings} */
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
     TypeHandlerRegistry typeHandlerRegistry = ms.getConfiguration().getTypeHandlerRegistry();
     // mimic DefaultParameterHandler logic

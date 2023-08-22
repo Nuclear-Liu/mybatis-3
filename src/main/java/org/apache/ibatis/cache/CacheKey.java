@@ -23,6 +23,8 @@ import java.util.StringJoiner;
 import org.apache.ibatis.reflection.ArrayUtil;
 
 /**
+ * 缓存对象主键：保证缓存的唯一性.
+ *
  * @author Clinton Begin
  */
 public class CacheKey implements Cloneable, Serializable {

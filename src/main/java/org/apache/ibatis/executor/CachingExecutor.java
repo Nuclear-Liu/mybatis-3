@@ -170,8 +170,12 @@ public class CachingExecutor implements Executor {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql) {
+    /** 创建的规则一致 */
     return delegate.createCacheKey(ms, parameterObject, rowBounds, boundSql);
   }
 

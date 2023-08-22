@@ -30,37 +30,58 @@ public class PerpetualCache implements Cache {
 
   private final String id;
 
+  /**
+   * 实际缓存存储使用的数据结构： <code>key</code>: namespace.method.<code>value</code>: 实际缓存对象
+   */
   private final Map<Object, Object> cache = new HashMap<>();
 
   public PerpetualCache(String id) {
     this.id = id;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String getId() {
     return id;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public int getSize() {
     return cache.size();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void putObject(Object key, Object value) {
     cache.put(key, value);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Object getObject(Object key) {
     return cache.get(key);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Object removeObject(Object key) {
     return cache.remove(key);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void clear() {
     cache.clear();

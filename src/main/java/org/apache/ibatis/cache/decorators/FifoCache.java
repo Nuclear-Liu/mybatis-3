@@ -1,5 +1,5 @@
 /*
- *    Copyright 2009-2022 the original author or authors.
+ *    Copyright 2009-2023 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,13 +22,21 @@ import org.apache.ibatis.cache.Cache;
 
 /**
  * FIFO (first in, first out) cache decorator.
+ * <p>
+ * 先进先出缓存装饰器，保证数据有序.
  *
  * @author Clinton Begin
  */
 public class FifoCache implements Cache {
 
   private final Cache delegate;
+  /**
+   * 保证先进先出数据结构：双端队列 {@link Deque}
+   */
   private final Deque<Object> keyList;
+  /**
+   * 双端队列容量.
+   */
   private int size;
 
   public FifoCache(Cache delegate) {

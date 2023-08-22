@@ -131,8 +131,10 @@ public class TypeAliasRegistry {
       String key = string.toLowerCase(Locale.ENGLISH);
       Class<T> value;
       if (typeAliases.containsKey(key)) {
+        /** 通过系统默认别名获取类 */
         value = (Class<T>) typeAliases.get(key);
       } else {
+        /** 通过全路径名获取类 */
         value = (Class<T>) Resources.classForName(string);
       }
       return value;

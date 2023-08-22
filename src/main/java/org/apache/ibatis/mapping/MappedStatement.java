@@ -37,6 +37,9 @@ public final class MappedStatement {
 
   private String resource;
   private Configuration configuration;
+  /**
+   * <code>namespace.method_name</code>
+   */
   private String id;
   private Integer fetchSize;
   private Integer timeout;
