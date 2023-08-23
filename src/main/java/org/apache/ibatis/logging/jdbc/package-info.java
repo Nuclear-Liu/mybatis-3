@@ -1,5 +1,5 @@
 /*
- *    Copyright 2009-2022 the original author or authors.
+ *    Copyright 2009-2023 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,5 +15,7 @@
  */
 /**
  * Logging proxies that logs any JDBC statement.
+ * <p/>
+ * 记录任何 JDBC 语句的日志代理.
  */
 package org.apache.ibatis.logging.jdbc;

@@ -49,6 +49,9 @@ public abstract class BaseJdbcLogger {
   private final List<Object> columnValues = new ArrayList<>();
 
   protected final Log statementLog;
+  /**
+   * 查询栈深度.
+   */
   protected final int queryStack;
 
   /*

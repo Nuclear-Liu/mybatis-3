@@ -1,5 +1,5 @@
 /*
- *    Copyright 2009-2022 the original author or authors.
+ *    Copyright 2009-2023 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -30,6 +30,9 @@ public final class LogFactory {
 
   private static Constructor<? extends Log> logConstructor;
 
+  /**
+   * 顺序加载对应的日志组件，从上往下依次加载，将在成功后将不会在继续加载
+   */
   static {
     tryImplementation(LogFactory::useSlf4jLogging);
     tryImplementation(LogFactory::useCommonsLogging);
@@ -55,6 +58,12 @@ public final class LogFactory {
     }
   }
 
+  /**
+   * 设置自定义日志实现类.
+   *
+   * @param clazz
+   *          配置文件中用户指定的日志实现类
+   */
   public static synchronized void useCustomLogging(Class<? extends Log> clazz) {
     setImplementation(clazz);
   }
@@ -91,6 +100,12 @@ public final class LogFactory {
     setImplementation(org.apache.ibatis.logging.nologging.NoLoggingImpl.class);
   }
 
+  /**
+   * 尝试加载指定的日志实现.
+   *
+   * @param runnable
+   *          函数接口
+   */
   private static void tryImplementation(Runnable runnable) {
     if (logConstructor == null) {
       try {
@@ -101,13 +116,27 @@ public final class LogFactory {
     }
   }
 
+  /**
+   * 设置日志实现类.
+   *
+   * @param implClass
+   */
   private static void setImplementation(Class<? extends Log> implClass) {
     try {
+      /**
+       * 1. 获取构指定日志适配器的造器方法.
+       */
       Constructor<? extends Log> candidate = implClass.getConstructor(String.class);
+      /**
+       * 2. 获取日志对象
+       */
       Log log = candidate.newInstance(LogFactory.class.getName());
       if (log.isDebugEnabled()) {
         log.debug("Logging initialized using '" + implClass + "' adapter.");
       }
+      /**
+       * 将日志适配器构造方法绑定到日志工厂 {@link LogFactory#logConstructor} .
+       */
       logConstructor = candidate;
     } catch (Throwable t) {
       throw new LogException("Error setting Log implementation.  Cause: " + t, t);

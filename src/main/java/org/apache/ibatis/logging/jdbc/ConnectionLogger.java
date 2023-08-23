@@ -27,12 +27,17 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
  * Connection proxy to add logging.
+ * <p/>
+ * 连接代理添加日志记录.
  *
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
 public final class ConnectionLogger extends BaseJdbcLogger implements InvocationHandler {
 
+  /**
+   * 被代理对象.
+   */
   private final Connection connection;
 
   private ConnectionLogger(Connection conn, Log statementLog, int queryStack) {

@@ -124,6 +124,9 @@ public class Configuration {
   protected boolean argNameBasedConstructorAutoMapping;
 
   protected String logPrefix;
+  /**
+   * 用户指定的日志是实现类.
+   */
   protected Class<? extends Log> logImpl;
   protected Class<? extends VFS> vfsImpl;
   protected Class<?> defaultSqlProviderType;
@@ -246,9 +249,18 @@ public class Configuration {
     return logImpl;
   }
 
+  /**
+   * 关联具体日志实现类.
+   *
+   * @param logImpl
+   *          用户指定的具体日志实现类
+   */
   public void setLogImpl(Class<? extends Log> logImpl) {
     if (logImpl != null) {
       this.logImpl = logImpl;
+      /**
+       * 设置自定义日志实现类.
+       */
       LogFactory.useCustomLogging(this.logImpl);
     }
   }

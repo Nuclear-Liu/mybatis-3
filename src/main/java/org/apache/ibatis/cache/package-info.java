@@ -16,6 +16,6 @@
 /**
  * Base package for caching stuff.
  * <p>
- * 缓存模块.
+ * 基础模块: 缓存.
  */
 package org.apache.ibatis.cache;

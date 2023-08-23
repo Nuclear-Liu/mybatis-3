@@ -195,8 +195,20 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 根据配置文件中的配置，设置日志.
+   *
+   * @param props
+   *          全局配置文件解析后的配置属性
+   */
   private void loadCustomLogImpl(Properties props) {
+    /**
+     * 根据配置的 <code>logImpl</code> 属性获取日志实现类
+     */
     Class<? extends Log> logImpl = resolveClass(props.getProperty("logImpl"));
+    /**
+     * 关联具体日志实现类.
+     */
     configuration.setLogImpl(logImpl);
   }
 
