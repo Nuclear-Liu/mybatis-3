@@ -402,8 +402,14 @@ public abstract class BaseExecutor implements Executor {
   }
 
   protected Connection getConnection(Log statementLog) throws SQLException {
+    /**
+     * 实际被代理前的数据库连接对象 {@link Connection}.
+     */
     Connection connection = transaction.getConnection();
     if (statementLog.isDebugEnabled()) {
+      /**
+       * 启用日志打印，创建数据库连接器代理对象
+       */
       return ConnectionLogger.newInstance(connection, statementLog, queryStack);
     }
     return connection;

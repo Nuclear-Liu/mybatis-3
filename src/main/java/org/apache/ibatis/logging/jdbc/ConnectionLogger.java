@@ -36,7 +36,7 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 public final class ConnectionLogger extends BaseJdbcLogger implements InvocationHandler {
 
   /**
-   * 被代理对象.
+   * 被代理的数据库连接器对象.
    */
   private final Connection connection;
 
@@ -48,18 +48,37 @@ public final class ConnectionLogger extends BaseJdbcLogger implements Invocation
   @Override
   public Object invoke(Object proxy, Method method, Object[] params) throws Throwable {
     try {
+      /**
+       * 如果调用的是 {@link Object} 继承的方法，直接调用(equals/hashCode/toString...).
+       */
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, params);
       }
+      /**
+       * 如果调用的方法名称为: prepareStatement 或 prepareCall
+       */
       if ("prepareStatement".equals(method.getName()) || "prepareCall".equals(method.getName())) {
         if (isDebugEnabled()) {
+          // 输出日志
           debug(" Preparing: " + removeExtraWhitespace((String) params[0]), true);
         }
+        /**
+         * 创建 {@link PreparedStatement} 对象
+         */
         PreparedStatement stmt = (PreparedStatement) method.invoke(connection, params);
+        /**
+         * 创建 {@link PreparedStatement} 的代理对象
+         */
         return PreparedStatementLogger.newInstance(stmt, statementLog, queryStack);
       }
       if ("createStatement".equals(method.getName())) {
+        /**
+         * 创建 {@link Statement} 对象.
+         */
         Statement stmt = (Statement) method.invoke(connection, params);
+        /**
+         * 创建 {@link Statement} 的代理对象
+         */
         return StatementLogger.newInstance(stmt, statementLog, queryStack);
       } else {
         return method.invoke(connection, params);
@@ -71,6 +90,8 @@ public final class ConnectionLogger extends BaseJdbcLogger implements Invocation
 
   /**
    * Creates a logging version of a connection.
+   * <p/>
+   * 创建数据库连接器对象的日志代理对象
    *
    * @param conn
    *          the original connection

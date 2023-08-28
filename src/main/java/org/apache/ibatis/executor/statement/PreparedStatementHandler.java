@@ -15,6 +15,7 @@
  */
 package org.apache.ibatis.executor.statement;
 
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -93,9 +94,15 @@ public class PreparedStatementHandler extends BaseStatementHandler {
 
   /**
    * {@inheritDoc}
-   * <p>
-   * 使用 {@link Connection#prepareStatement(String)} 创建 {@link Statement} 的具体子类 {@link PreparedStatement}.
-   * </p>
+   * <p/>
+   * 使用代理 {@link Connection#prepareStatement(String)} 对象创建 {@link Statement} 的具体子类 {@link PreparedStatement}.
+   *
+   * @param connection
+   *          连接器代理类:{@link org.apache.ibatis.logging.jdbc.ConnectionLogger}
+   *
+   * @return {@link PreparedStatement} 的代理对象 {@link org.apache.ibatis.logging.jdbc.PreparedStatementLogger}
+   *
+   * @throws SQLException
    */
   @Override
   protected Statement instantiateStatement(Connection connection) throws SQLException {
@@ -103,8 +110,16 @@ public class PreparedStatementHandler extends BaseStatementHandler {
     if (mappedStatement.getKeyGenerator() instanceof Jdbc3KeyGenerator) {
       String[] keyColumnNames = mappedStatement.getKeyColumns();
       if (keyColumnNames == null) {
+        /**
+         * {@link org.apache.ibatis.logging.jdbc.PreparedStatementLogger#invoke(Object, Method, Object[])} - 代理执行
+         * "prepareStatement" 方法； 返回代理对象 {@link org.apache.ibatis.logging.jdbc.PreparedStatementLogger}
+         */
         return connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
       } else {
+        /**
+         * {@link org.apache.ibatis.logging.jdbc.PreparedStatementLogger#invoke(Object, Method, Object[])} - 代理执行
+         * "prepareStatement" 方法； 返回代理对象 {@link org.apache.ibatis.logging.jdbc.PreparedStatementLogger}
+         */
         return connection.prepareStatement(sql, keyColumnNames);
       }
     }

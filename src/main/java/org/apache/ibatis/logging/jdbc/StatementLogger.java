@@ -26,6 +26,8 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
  * Statement proxy to add logging.
+ * <p/>
+ * {@link Statement} 的日志代理对象.
  *
  * @author Clinton Begin
  * @author Eduardo Macarron
@@ -69,6 +71,8 @@ public final class StatementLogger extends BaseJdbcLogger implements InvocationH
 
   /**
    * Creates a logging version of a Statement.
+   * <p/>
+   * 创建 {@link Statement} 的日志代理对象
    *
    * @param stmt
    *          the statement

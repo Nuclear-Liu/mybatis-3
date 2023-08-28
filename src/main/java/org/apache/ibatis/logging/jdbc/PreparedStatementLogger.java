@@ -27,6 +27,8 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
  * PreparedStatement proxy to add logging.
+ * <p/>
+ * {@link PreparedStatement} 的日志代理对象.
  *
  * @author Clinton Begin
  * @author Eduardo Macarron
@@ -46,18 +48,24 @@ public final class PreparedStatementLogger extends BaseJdbcLogger implements Inv
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, params);
       }
+      // 处理待执行相关方法.
       if (EXECUTE_METHODS.contains(method.getName())) {
         if (isDebugEnabled()) {
+          // 日志记录.
           debug("Parameters: " + getParameterValueString(), true);
         }
         clearColumnInfo();
         if ("executeQuery".equals(method.getName())) {
           ResultSet rs = (ResultSet) method.invoke(statement, params);
+          /**
+           * 创建了 {@link ResultSet} 的代理对象，进行增强.
+           */
           return rs == null ? null : ResultSetLogger.newInstance(rs, statementLog, queryStack);
         } else {
           return method.invoke(statement, params);
         }
       }
+      // 处理设置相关方法.
       if (SET_METHODS.contains(method.getName())) {
         if ("setNull".equals(method.getName())) {
           setColumn(params[0], null);
@@ -84,6 +92,8 @@ public final class PreparedStatementLogger extends BaseJdbcLogger implements Inv
 
   /**
    * Creates a logging version of a PreparedStatement.
+   * <p/>
+   * 创建 {@link PreparedStatement} 日志代理对象
    *
    * @param stmt
    *          - the statement

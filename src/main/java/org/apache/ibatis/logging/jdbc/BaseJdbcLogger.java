@@ -34,20 +34,40 @@ import org.apache.ibatis.reflection.ArrayUtil;
 
 /**
  * Base class for proxies to do logging.
+ * <p/>
+ * 进行日志记录的代理基类.
  *
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
 public abstract class BaseJdbcLogger {
 
+  /**
+   * 记录 {@link PreparedStatement} 接口中定义的常用的 <code>set*()</code> 方法.
+   */
   protected static final Set<String> SET_METHODS;
+  /**
+   * 记录 {@link java.sql.Statement} 接口和 {@link PreparedStatement} 接口中与执行 SQL 语句相关的方法.
+   */
   protected static final Set<String> EXECUTE_METHODS = new HashSet<>();
 
+  /**
+   * 记录 {@link PreparedStatement}.setX() 方法设置的键值对
+   */
   private final Map<Object, Object> columnMap = new HashMap<>();
 
+  /**
+   * 记录 {@link PreparedStatement}.setX() 方法设置的 key
+   */
   private final List<Object> columnNames = new ArrayList<>();
+  /**
+   * 记录 {@link PreparedStatement}.setX() 方法设置的 value
+   */
   private final List<Object> columnValues = new ArrayList<>();
 
+  /**
+   * 用于日志记录的对象.
+   */
   protected final Log statementLog;
   /**
    * 查询栈深度.

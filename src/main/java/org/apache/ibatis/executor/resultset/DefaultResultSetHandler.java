@@ -299,6 +299,14 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     }
   }
 
+  /**
+   * @param rsw
+   * @param resultMap
+   * @param multipleResults
+   * @param parentMapping
+   *
+   * @throws SQLException
+   */
   private void handleResultSet(ResultSetWrapper rsw, ResultMap resultMap, List<Object> multipleResults,
       ResultMapping parentMapping) throws SQLException {
     try {
@@ -1005,6 +1013,9 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   private void handleRowValuesForNestedResultMap(ResultSetWrapper rsw, ResultMap resultMap,
       ResultHandler<?> resultHandler, RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
     final DefaultResultContext<Object> resultContext = new DefaultResultContext<>();
+    /**
+     * {@link ResultSet}'s {@link org.apache.ibatis.logging.jdbc.ResultSetLogger}
+     */
     ResultSet resultSet = rsw.getResultSet();
     skipRows(resultSet, rowBounds);
     Object rowValue = previousRowValue;

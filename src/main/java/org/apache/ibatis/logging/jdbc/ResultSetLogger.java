@@ -31,6 +31,8 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
  * ResultSet proxy to add logging.
+ * <p/>
+ * {@link ResultSet} 的日志代理.
  *
  * @author Clinton Begin
  * @author Eduardo Macarron
@@ -89,6 +91,14 @@ public final class ResultSetLogger extends BaseJdbcLogger implements InvocationH
     }
   }
 
+  /**
+   * 处理查询结果头
+   *
+   * @param rsmd
+   * @param columnCount
+   *
+   * @throws SQLException
+   */
   private void printColumnHeaders(ResultSetMetaData rsmd, int columnCount) throws SQLException {
     StringJoiner row = new StringJoiner(", ", "   Columns: ", "");
     for (int i = 1; i <= columnCount; i++) {
@@ -100,6 +110,11 @@ public final class ResultSetLogger extends BaseJdbcLogger implements InvocationH
     trace(row.toString(), false);
   }
 
+  /**
+   * 处理查询结果值
+   *
+   * @param columnCount
+   */
   private void printColumnValues(int columnCount) {
     StringJoiner row = new StringJoiner(", ", "       Row: ", "");
     for (int i = 1; i <= columnCount; i++) {
@@ -119,6 +134,8 @@ public final class ResultSetLogger extends BaseJdbcLogger implements InvocationH
 
   /**
    * Creates a logging version of a ResultSet.
+   * <p/>
+   * 创建 {@link ResultSet} 的日志代理对象.
    *
    * @param rs
    *          the ResultSet to proxy

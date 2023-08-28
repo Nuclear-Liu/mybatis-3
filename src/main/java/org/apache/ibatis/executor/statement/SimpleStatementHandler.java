@@ -83,6 +83,9 @@ public class SimpleStatementHandler extends BaseStatementHandler {
     return resultSetHandler.handleCursorResultSets(statement);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   protected Statement instantiateStatement(Connection connection) throws SQLException {
     if (mappedStatement.getResultSetType() == ResultSetType.DEFAULT) {
