@@ -1,5 +1,5 @@
 /*
- *    Copyright 2009-2022 the original author or authors.
+ *    Copyright 2009-2023 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import org.apache.ibatis.transaction.TransactionFactory;
 
 /**
  * Creates {@link JdbcTransaction} instances.
+ * <p/>
+ * 用于创建 {@link JdbcTransaction} 实例的工厂.
  *
  * @author Clinton Begin
  *
@@ -35,6 +37,12 @@ public class JdbcTransactionFactory implements TransactionFactory {
 
   private boolean skipSetAutoCommitOnClose;
 
+  /**
+   * {@inheritDoc}
+   *
+   * @param props
+   *          the new properties
+   */
   @Override
   public void setProperties(Properties props) {
     if (props == null) {
@@ -46,11 +54,33 @@ public class JdbcTransactionFactory implements TransactionFactory {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   * <p/>
+   * 创建 {@link JdbcTransaction} 对象
+   *
+   * @param conn
+   *          Existing database connection
+   *
+   * @return {@link JdbcTransaction}
+   */
   @Override
   public Transaction newTransaction(Connection conn) {
     return new JdbcTransaction(conn);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @param ds
+   *          DataSource to take the connection from
+   * @param level
+   *          Desired isolation level
+   * @param autoCommit
+   *          Desired autocommit
+   *
+   * @return
+   */
   @Override
   public Transaction newTransaction(DataSource ds, TransactionIsolationLevel level, boolean autoCommit) {
     return new JdbcTransaction(ds, level, autoCommit, skipSetAutoCommitOnClose);

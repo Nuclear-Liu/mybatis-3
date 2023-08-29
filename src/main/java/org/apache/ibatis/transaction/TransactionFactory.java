@@ -31,6 +31,8 @@ public interface TransactionFactory {
 
   /**
    * Sets transaction factory custom properties.
+   * <p/>
+   * 设置事务工厂自定义属性.
    *
    * @param props
    *          the new properties
@@ -41,6 +43,8 @@ public interface TransactionFactory {
 
   /**
    * Creates a {@link Transaction} out of an existing connection.
+   * <p/>
+   * 根据 {@link Connection} 对象创建事务对象 {@link Transaction}.
    *
    * @param conn
    *          Existing database connection

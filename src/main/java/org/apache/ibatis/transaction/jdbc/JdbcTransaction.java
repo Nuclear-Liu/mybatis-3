@@ -39,8 +39,17 @@ public class JdbcTransaction implements Transaction {
 
   private static final Log log = LogFactory.getLog(JdbcTransaction.class);
 
+  /**
+   * 数据库连接对象
+   */
   protected Connection connection;
+  /**
+   * 数据源
+   */
   protected DataSource dataSource;
+  /**
+   * 事务隔离级别
+   */
   protected TransactionIsolationLevel level;
   protected boolean autoCommit;
   protected boolean skipSetAutoCommitOnClose;
@@ -61,6 +70,13 @@ public class JdbcTransaction implements Transaction {
     this.connection = connection;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return
+   *
+   * @throws SQLException
+   */
   @Override
   public Connection getConnection() throws SQLException {
     if (connection == null) {
@@ -69,6 +85,13 @@ public class JdbcTransaction implements Transaction {
     return connection;
   }
 
+  /**
+   * {@inheritDoc}
+   * <p/>
+   * 使用连接对象 {@link Connection} 自身的提交方法.
+   *
+   * @throws SQLException
+   */
   @Override
   public void commit() throws SQLException {
     if (connection != null && !connection.getAutoCommit()) {
@@ -79,6 +102,13 @@ public class JdbcTransaction implements Transaction {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   * <p/>
+   * 使用连接对象 {@link Connection} 自身的回滚方法.
+   *
+   * @throws SQLException
+   */
   @Override
   public void rollback() throws SQLException {
     if (connection != null && !connection.getAutoCommit()) {
