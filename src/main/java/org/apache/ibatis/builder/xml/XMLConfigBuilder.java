@@ -433,6 +433,16 @@ public class XMLConfigBuilder extends BaseBuilder {
     throw new BuilderException("Environment declaration requires a TransactionFactory.");
   }
 
+  /**
+   * 加载解析数据源相关配置.
+   *
+   * @param context
+   *          xml 配置文件数据源节点
+   *
+   * @return
+   *
+   * @throws Exception
+   */
   private DataSourceFactory dataSourceElement(XNode context) throws Exception {
     if (context != null) {
       String type = context.getStringAttribute("type");

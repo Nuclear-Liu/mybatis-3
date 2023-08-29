@@ -1,5 +1,5 @@
 /*
- *    Copyright 2009-2022 the original author or authors.
+ *    Copyright 2009-2023 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,8 +24,19 @@ import javax.sql.DataSource;
  */
 public interface DataSourceFactory {
 
+  /**
+   * 在全局配置文件加载过程中 <code>environments.environment.dataSource</code> 标签中的内容初始化到当前方法中.
+   *
+   * @param props
+   *          {@link Properties} 配置属性
+   */
   void setProperties(Properties props);
 
+  /**
+   * 获取数据源实例 {@link DataSource}.
+   *
+   * @return
+   */
   DataSource getDataSource();
 
 }

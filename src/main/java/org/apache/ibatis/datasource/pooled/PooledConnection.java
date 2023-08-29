@@ -24,6 +24,8 @@ import java.sql.SQLException;
 import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
+ * 使用连接池时的连接对象，代理真正的 {@link Connection} 对象.
+ *
  * @author Clinton Begin
  */
 class PooledConnection implements InvocationHandler {
@@ -33,12 +35,33 @@ class PooledConnection implements InvocationHandler {
 
   private final int hashCode;
   private final PooledDataSource dataSource;
+  /**
+   * 真正的数据库连接对象
+   */
   private final Connection realConnection;
+  /**
+   * 数据库连接代理的对象
+   */
   private final Connection proxyConnection;
+  /**
+   * 从连接池中取出该连接的时间戳
+   */
   private long checkoutTimestamp;
+  /**
+   * 该连接创建的时间戳
+   */
   private long createdTimestamp;
+  /**
+   * 最后一次被使用的时间戳
+   */
   private long lastUsedTimestamp;
+  /**
+   *
+   */
   private int connectionTypeCode;
+  /**
+   * 连接是否有效的标志.
+   */
   private boolean valid;
 
   /**
@@ -61,6 +84,8 @@ class PooledConnection implements InvocationHandler {
 
   /**
    * Invalidates the connection.
+   * <p/>
+   * 使连接无效.
    */
   public void invalidate() {
     valid = false;
@@ -68,6 +93,8 @@ class PooledConnection implements InvocationHandler {
 
   /**
    * Method to see if the connection is usable.
+   * <p/>
+   * 检查连接是否有效.
    *
    * @return True if the connection is usable
    */
@@ -244,8 +271,14 @@ class PooledConnection implements InvocationHandler {
    */
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    /**
+     * 调用的方法名称.
+     */
     String methodName = method.getName();
     if (CLOSE.equals(methodName)) {
+      /**
+       * 如果调用的是 <code>close</code> 方法则将数据库连接放回到数据库连接池，而不是真正的关闭数据库连接.
+       */
       dataSource.pushConnection(this);
       return null;
     }
@@ -253,8 +286,14 @@ class PooledConnection implements InvocationHandler {
       if (!Object.class.equals(method.getDeclaringClass())) {
         // issue #579 toString() should never fail
         // throw an SQLException instead of a Runtime
+        /**
+         * 检查连接是否有效.
+         */
         checkConnection();
       }
+      /**
+       * 调用被代理对象的方法
+       */
       return method.invoke(realConnection, args);
     } catch (Throwable t) {
       throw ExceptionUtil.unwrapThrowable(t);

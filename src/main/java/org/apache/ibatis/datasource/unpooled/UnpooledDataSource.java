@@ -33,25 +33,62 @@ import javax.sql.DataSource;
 import org.apache.ibatis.io.Resources;
 
 /**
+ * 非连接池数据源.
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
 public class UnpooledDataSource implements DataSource {
 
+  /**
+   * 数据库驱动类加载器
+   */
   private ClassLoader driverClassLoader;
+  /**
+   * 数据库驱动相关信息.
+   */
   private Properties driverProperties;
+  /**
+   * 缓存所有已注册的数据库连接驱动.
+   * <p/>
+   * key: 数据库驱动类全路径名. value: {@link Driver}.
+   */
   private static final Map<String, Driver> registeredDrivers = new ConcurrentHashMap<>();
 
+  /**
+   * 数据库连接驱动类全路径名
+   */
   private String driver;
+  /**
+   * 数据源 URL
+   */
   private String url;
+  /**
+   * 连接数据源用户名
+   */
   private String username;
+  /**
+   * 连接数据源密码
+   */
   private String password;
 
+  /**
+   * 是否自动提交
+   */
   private Boolean autoCommit;
+  /**
+   * 数据库隔离级别
+   */
   private Integer defaultTransactionIsolationLevel;
+  /**
+   * 数据库连接超时时间
+   */
   private Integer defaultNetworkTimeout;
 
   static {
+    /**
+     * 从 {@link DriverManager} 获取所有驱动，并将其放入缓存 {@link UnpooledDataSource#registeredDrivers}.
+     */
     Enumeration<Driver> drivers = DriverManager.getDrivers();
     while (drivers.hasMoreElements()) {
       Driver driver = drivers.nextElement();
@@ -91,11 +128,30 @@ public class UnpooledDataSource implements DataSource {
     this.driverProperties = driverProperties;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return
+   *
+   * @throws SQLException
+   */
   @Override
   public Connection getConnection() throws SQLException {
     return doGetConnection(username, password);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @param username
+   *          the database user on whose behalf the connection is being made
+   * @param password
+   *          the user's password
+   *
+   * @return
+   *
+   * @throws SQLException
+   */
   @Override
   public Connection getConnection(String username, String password) throws SQLException {
     return doGetConnection(username, password);
@@ -209,6 +265,18 @@ public class UnpooledDataSource implements DataSource {
     this.defaultNetworkTimeout = defaultNetworkTimeout;
   }
 
+  /**
+   * 根据用户名与密码获取数据源连接对象 {@link Connection}.
+   *
+   * @param username
+   *          数据源连接用户名
+   * @param password
+   *          数据源连接密码
+   *
+   * @return {@link Connection}
+   *
+   * @throws SQLException
+   */
   private Connection doGetConnection(String username, String password) throws SQLException {
     Properties props = new Properties();
     if (driverProperties != null) {
@@ -223,13 +291,35 @@ public class UnpooledDataSource implements DataSource {
     return doGetConnection(props);
   }
 
+  /**
+   * 根据属性信息获取连接对象.
+   *
+   * @param properties
+   *          数据库连接相关属性信息
+   *
+   * @return {@link Connection}
+   *
+   * @throws SQLException
+   */
   private Connection doGetConnection(Properties properties) throws SQLException {
+    /**
+     * 初始化驱动
+     */
     initializeDriver();
+    /**
+     * 获取连接对象.
+     */
     Connection connection = DriverManager.getConnection(url, properties);
+    /**
+     * 配置 connection 对象的自动提交和事务隔离级别.
+     */
     configureConnection(connection);
     return connection;
   }
 
+  /**
+   * @throws SQLException
+   */
   private synchronized void initializeDriver() throws SQLException {
     if (!registeredDrivers.containsKey(driver)) {
       Class<?> driverType;
@@ -250,14 +340,31 @@ public class UnpooledDataSource implements DataSource {
     }
   }
 
+  /**
+   * 对连接对象 {@link Connection} 设置：连接超时时间、自动提交、事务隔离级别.
+   *
+   * @param conn
+   *          {@link Connection}
+   *
+   * @throws SQLException
+   */
   private void configureConnection(Connection conn) throws SQLException {
     if (defaultNetworkTimeout != null) {
+      /**
+       * 设置数据源网络连接超时时间.
+       */
       conn.setNetworkTimeout(Executors.newSingleThreadExecutor(), defaultNetworkTimeout);
     }
     if (autoCommit != null && autoCommit != conn.getAutoCommit()) {
+      /**
+       * 设置自动提交.
+       */
       conn.setAutoCommit(autoCommit);
     }
     if (defaultTransactionIsolationLevel != null) {
+      /**
+       * 设置事务隔离级别
+       */
       conn.setTransactionIsolation(defaultTransactionIsolationLevel);
     }
   }

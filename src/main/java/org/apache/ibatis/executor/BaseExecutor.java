@@ -403,7 +403,8 @@ public abstract class BaseExecutor implements Executor {
 
   protected Connection getConnection(Log statementLog) throws SQLException {
     /**
-     * 实际被代理前的数据库连接对象 {@link Connection}.
+     * 实际被代理前的数据库连接对象 {@link Connection}: {@link org.apache.ibatis.datasource.pooled.PooledConnection}
+     * {@link org.apache.ibatis.datasource.unpooled.UnpooledDataSource}.
      */
     Connection connection = transaction.getConnection();
     if (statementLog.isDebugEnabled()) {
