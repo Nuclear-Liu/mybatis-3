@@ -48,23 +48,58 @@ import org.apache.ibatis.util.MapUtil;
 /**
  * This class represents a cached set of class definition information that allows for easy mapping between property
  * names and getter/setter methods.
+ * <p/>
+ * 该类代表一组缓存的类定义信息，可方便地映射属性名称和 <code>geeter/setter</code> 方法； {@link Reflector} 对象与<b>Java类对象</b>一一对应.
  *
  * @author Clinton Begin
  */
 public class Reflector {
 
   private static final MethodHandle isRecordMethodHandle = getIsRecordMethodHandle();
+  /**
+   * 对应被反射类的 Class.
+   */
   private final Class<?> type;
+  /**
+   * 可读属性的名称集合；可读属性对应存在 getter 方法的属性，初始值 null.
+   */
   private final String[] readablePropertyNames;
+  /**
+   * 可写属性的名称集合；可写属性对应存在 setter 方法的属性，初始值 null
+   */
   private final String[] writablePropertyNames;
+  /**
+   * 记录属性的 setter 方法. key: 属性名称 value: Invoker 方法
+   */
   private final Map<String, Invoker> setMethods = new HashMap<>();
+  /**
+   * 记录属性的 getter 方法. key: 属性名称 value: Invoker 方法
+   */
   private final Map<String, Invoker> getMethods = new HashMap<>();
+  /**
+   * 记录属性相应的 setter 方法的参数类型. key: 属性名称 value: 参数类型
+   */
   private final Map<String, Class<?>> setTypes = new HashMap<>();
+  /**
+   * 记录属性相应的 getter 方法的返回值类型. key: 属性名称 value: 返回值类型
+   */
   private final Map<String, Class<?>> getTypes = new HashMap<>();
+  /**
+   * 默认构造方法.
+   */
   private Constructor<?> defaultConstructor;
 
+  /**
+   * 记录所有属性的名称. key: value:
+   */
   private final Map<String, String> caseInsensitivePropertyMap = new HashMap<>();
 
+  /**
+   * 根据给定的类型解析为 {@link Reflector} 对象.
+   *
+   * @param clazz
+   *          类类型
+   */
   public Reflector(Class<?> clazz) {
     type = clazz;
     addDefaultConstructor(clazz);
@@ -91,8 +126,20 @@ public class Reflector {
         .forEach(m -> addGetMethod(m.getName(), m, false));
   }
 
+  /**
+   * 设置默认构造函数属性.
+   *
+   * @param clazz
+   *          类的类型
+   */
   private void addDefaultConstructor(Class<?> clazz) {
+    /**
+     * 获取类的构造方法.
+     */
     Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+    /**
+     * 过滤参数为零，即无参构造函数，并填充属性。
+     */
     Arrays.stream(constructors).filter(constructor -> constructor.getParameterTypes().length == 0).findAny()
         .ifPresent(constructor -> this.defaultConstructor = constructor);
   }
@@ -235,6 +282,11 @@ public class Reflector {
     return result;
   }
 
+  /**
+   * 添加属性字段.
+   *
+   * @param clazz
+   */
   private void addFields(Class<?> clazz) {
     Field[] fields = clazz.getDeclaredFields();
     for (Field field : fields) {
@@ -308,11 +360,20 @@ public class Reflector {
 
   private void addUniqueMethods(Map<String, Method> uniqueMethods, Method[] methods) {
     for (Method currentMethod : methods) {
+      /**
+       * 桥接方法的判断：泛型相关.
+       */
       if (!currentMethod.isBridge()) {
+        /**
+         * 获取方法的唯一签名: <code>返回类型#方法名称:参数类型列表</code>
+         */
         String signature = getSignature(currentMethod);
         // check to see if the method is already known
         // if it is known, then an extended class must have
         // overridden a method
+        /**
+         * 检查是否在子类中已经添加过了
+         */
         if (!uniqueMethods.containsKey(signature)) {
           uniqueMethods.put(signature, currentMethod);
         }
