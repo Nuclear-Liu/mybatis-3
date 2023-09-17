@@ -28,12 +28,25 @@ public class MethodInvoker implements Invoker {
   private final Class<?> type;
   private final Method method;
 
+  /**
+   * 初始化 type 与 method 属性变量.
+   * @param method
+   */
   public MethodInvoker(Method method) {
     this.method = method;
 
+    /**
+     * 判断方法参数是否为 1 个.
+     */
     if (method.getParameterTypes().length == 1) {
+      /**
+       * 方法参数为 1 个，表示方法为 setter 方法， type 为形参类型
+       */
       type = method.getParameterTypes()[0];
     } else {
+      /**
+       * 方法形参不为 1 即 0，表示方法为 getter 方法， type 为返回类型
+       */
       type = method.getReturnType();
     }
   }
@@ -41,8 +54,14 @@ public class MethodInvoker implements Invoker {
   @Override
   public Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException {
     try {
+      /**
+       * 执行方法
+       */
       return method.invoke(target, args);
     } catch (IllegalAccessException e) {
+      /**
+       * 权限检查
+       */
       if (Reflector.canControlMemberAccessible()) {
         method.setAccessible(true);
         return method.invoke(target, args);

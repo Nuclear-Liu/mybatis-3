@@ -26,6 +26,11 @@ import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 
 /**
+ * 参数类型解析器:
+ * <p/>
+ * 1. 解析字段类型{@link TypeParameterResolver#resolveFieldType(Field, Type)}；
+ * 2.方法返回值类型{@link TypeParameterResolver#resolveReturnType(Method, Type)}；
+ * 3.方法参数的类型{@link TypeParameterResolver#resolveParamTypes(Method, Type)}.
  * @author Iwao AVE!
  */
 public class TypeParameterResolver {
@@ -33,8 +38,10 @@ public class TypeParameterResolver {
   /**
    * Resolve field type.
    *
+   * 解析字段类型.
+   *
    * @param field
-   *          the field
+   *          the field 需要解析的字段
    * @param srcType
    *          the src type
    *
@@ -42,16 +49,27 @@ public class TypeParameterResolver {
    *         they will be resolved to the actual runtime {@link Type}s.
    */
   public static Type resolveFieldType(Field field, Type srcType) {
+    /**
+     * 获取字段声明的 {@link Type} 类型
+     */
     Type fieldType = field.getGenericType();
+    /**
+     * 获取字段声明所在的 {@link Class} 对象
+     */
     Class<?> declaringClass = field.getDeclaringClass();
+    /**
+     * 后续处理
+     */
     return resolveType(fieldType, srcType, declaringClass);
   }
 
   /**
    * Resolve return type.
    *
+   * 解析返回类型.
+   *
    * @param method
-   *          the method
+   *          the method 方法
    * @param srcType
    *          the src type
    *
@@ -59,13 +77,21 @@ public class TypeParameterResolver {
    *         they will be resolved to the actual runtime {@link Type}s.
    */
   public static Type resolveReturnType(Method method, Type srcType) {
+    /**
+     * 获取方法声明的返回 {@link Type} 类型
+     */
     Type returnType = method.getGenericReturnType();
+    /**
+     * 获取方法声明所属 {@link Class} 对象
+     */
     Class<?> declaringClass = method.getDeclaringClass();
     return resolveType(returnType, srcType, declaringClass);
   }
 
   /**
    * Resolve param types.
+   *
+   * 解析参数类型.
    *
    * @param method
    *          the method
@@ -77,16 +103,38 @@ public class TypeParameterResolver {
    *         they will be resolved to the actual runtime {@link Type}s.
    */
   public static Type[] resolveParamTypes(Method method, Type srcType) {
+    /**
+     * 获取方法参数对应的 {@link Type}
+     */
     Type[] paramTypes = method.getGenericParameterTypes();
+    /**
+     * 获取方法声明所在的类的 {@link Class}
+     */
     Class<?> declaringClass = method.getDeclaringClass();
+    /**
+     * 定义返回结果对象
+     */
     Type[] result = new Type[paramTypes.length];
     for (int i = 0; i < paramTypes.length; i++) {
+      /**
+       * 处理方法的每个参数
+       */
       result[i] = resolveType(paramTypes[i], srcType, declaringClass);
     }
     return result;
   }
 
+  /**
+   *
+   * @param type
+   * @param srcType
+   * @param declaringClass
+   * @return
+   */
   private static Type resolveType(Type type, Type srcType, Class<?> declaringClass) {
+    /**
+     * 根据 type 的具体类型不同做出不同的处理.
+     */
     if (type instanceof TypeVariable) {
       return resolveTypeVar((TypeVariable<?>) type, srcType, declaringClass);
     }
@@ -95,6 +143,9 @@ public class TypeParameterResolver {
     } else if (type instanceof GenericArrayType) {
       return resolveGenericArrayType((GenericArrayType) type, srcType, declaringClass);
     } else {
+      /**
+       * 普通类型：直接返回.
+       */
       return type;
     }
   }

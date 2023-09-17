@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import org.apache.ibatis.reflection.Reflector;
 
 /**
+ * getter invoker.
  * @author Clinton Begin
  */
 public class GetFieldInvoker implements Invoker {
@@ -29,13 +30,29 @@ public class GetFieldInvoker implements Invoker {
     this.field = field;
   }
 
+  /**
+   * {@inheritDoc}.
+   * @param target
+   * @param args
+   * @return
+   * @throws IllegalAccessException
+   */
   @Override
   public Object invoke(Object target, Object[] args) throws IllegalAccessException {
     try {
       return field.get(target);
     } catch (IllegalAccessException e) {
+      /**
+       * 权限检查.
+       */
       if (Reflector.canControlMemberAccessible()) {
+        /**
+         * 放开访问权限.
+         */
         field.setAccessible(true);
+        /**
+         * 返回对应属性的值.
+         */
         return field.get(target);
       }
       throw e;

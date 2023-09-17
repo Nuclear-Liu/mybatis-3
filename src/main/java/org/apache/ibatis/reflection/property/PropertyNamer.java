@@ -20,6 +20,9 @@ import java.util.Locale;
 import org.apache.ibatis.reflection.ReflectionException;
 
 /**
+ * 属性名称工具类.
+ * <p/>
+ * 方法以<code>is</code> <code>get</code> <code>set</code> 开头：截取获得属性名，并将首字母小写.
  * @author Clinton Begin
  */
 public final class PropertyNamer {
@@ -28,10 +31,24 @@ public final class PropertyNamer {
     // Prevent Instantiation of Static Class
   }
 
+  /**
+   * 方法以<code>is</code> <code>get</code> <code>set</code> 开头：截取获得属性名，并将首字母小写.
+   * @param name 方法名
+   * @return
+   */
   public static String methodToProperty(String name) {
+    /**
+     * 判断是否为<code>is</code>开头.
+     */
     if (name.startsWith("is")) {
+      /**
+       * 截取属性名
+       */
       name = name.substring(2);
     } else if (name.startsWith("get") || name.startsWith("set")) {
+      /**
+       * 截取属性名
+       */
       name = name.substring(3);
     } else {
       throw new ReflectionException(
@@ -39,20 +56,38 @@ public final class PropertyNamer {
     }
 
     if (name.length() == 1 || name.length() > 1 && !Character.isUpperCase(name.charAt(1))) {
+      /**
+       * 属性首字母变为小写
+       */
       name = name.substring(0, 1).toLowerCase(Locale.ENGLISH) + name.substring(1);
     }
 
     return name;
   }
 
+  /**
+   * 判断方法名称是否为属性.
+   * @param name 属性方法名
+   * @return
+   */
   public static boolean isProperty(String name) {
     return isGetter(name) || isSetter(name);
   }
 
+  /**
+   * 判断方法名称为获取器.
+   * @param name
+   * @return
+   */
   public static boolean isGetter(String name) {
     return name.startsWith("get") && name.length() > 3 || name.startsWith("is") && name.length() > 2;
   }
 
+  /**
+   * 判断方法名是否为设置器.
+   * @param name
+   * @return
+   */
   public static boolean isSetter(String name) {
     return name.startsWith("set") && name.length() > 3;
   }

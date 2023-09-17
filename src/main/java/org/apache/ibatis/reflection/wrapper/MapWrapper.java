@@ -25,10 +25,14 @@ import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
+ * {@link Map} 集合包装器类.
  * @author Clinton Begin
  */
 public class MapWrapper extends BaseWrapper {
 
+  /**
+   * 被包装对象.
+   */
   private final Map<String, Object> map;
 
   public MapWrapper(MetaObject metaObject, Map<String, Object> map) {

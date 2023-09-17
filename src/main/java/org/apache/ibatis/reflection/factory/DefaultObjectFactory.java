@@ -34,6 +34,7 @@ import org.apache.ibatis.reflection.ReflectionException;
 import org.apache.ibatis.reflection.Reflector;
 
 /**
+ * {@inheritDoc} 默认对象工厂
  * @author Clinton Begin
  */
 public class DefaultObjectFactory implements ObjectFactory, Serializable {
@@ -56,24 +57,57 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
   private <T> T instantiateClass(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
     try {
       Constructor<T> constructor;
+      /**
+       * 判断构造器参数类型或构造器参数为 null
+       */
       if (constructorArgTypes == null || constructorArgs == null) {
+        /**
+         * 获取构造器
+         */
         constructor = type.getDeclaredConstructor();
         try {
+          /**
+           * 使用无参构造器创建对象.
+           */
           return constructor.newInstance();
         } catch (IllegalAccessException e) {
+          /**
+           * 判断构造器方法是否为私有
+           */
           if (Reflector.canControlMemberAccessible()) {
+            /**
+             * 设置默认构造器访问权限
+             */
             constructor.setAccessible(true);
+            /**
+             * 无参构造器构造对象
+             */
             return constructor.newInstance();
           }
           throw e;
         }
       }
+      /**
+       * 构造器参数类型与构造器参数不为null：使用有参构造器创建对象
+       */
       constructor = type.getDeclaredConstructor(constructorArgTypes.toArray(new Class[0]));
       try {
+        /**
+         * 使用有参构造器创建对象
+         */
         return constructor.newInstance(constructorArgs.toArray(new Object[0]));
       } catch (IllegalAccessException e) {
+        /**
+         * 判断构造器方法是否为私有
+         */
         if (Reflector.canControlMemberAccessible()) {
+          /**
+           * 修改有参构造器访问权限.
+           */
           constructor.setAccessible(true);
+          /**
+           * 使用有参构造器创建对象.
+           */
           return constructor.newInstance(constructorArgs.toArray(new Object[0]));
         }
         throw e;
@@ -88,6 +122,11 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
     }
   }
 
+  /**
+   * 判断类型：如果是接口类型的话就返回对应额实现类.
+   * @param type
+   * @return
+   */
   protected Class<?> resolveInterface(Class<?> type) {
     Class<?> classToCreate;
     if (type == List.class || type == Collection.class || type == Iterable.class) {

@@ -28,6 +28,8 @@ public interface ObjectFactory {
   /**
    * Sets configuration properties.
    *
+   * 设置配置信息.
+   *
    * @param properties
    *          configuration properties
    */
@@ -37,6 +39,8 @@ public interface ObjectFactory {
 
   /**
    * Creates a new object with default constructor.
+   *
+   * 使用无参构造器创建对象.
    *
    * @param <T>
    *          the generic type
@@ -49,6 +53,8 @@ public interface ObjectFactory {
 
   /**
    * Creates a new object with the specified constructor and params.
+   *
+   * 使用有参构造器创建对象.
    *
    * @param <T>
    *          the generic type

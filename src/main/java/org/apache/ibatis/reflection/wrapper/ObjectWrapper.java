@@ -22,6 +22,7 @@ import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
+ * 对象包装器：方便通过该类对对象进行属性的设置以及属性的读取，然后根据被包裹对象的类型，分别使用不同的子类进行包裹。
  * @author Clinton Begin
  */
 public interface ObjectWrapper {
