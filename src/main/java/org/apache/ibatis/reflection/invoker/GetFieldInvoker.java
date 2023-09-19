@@ -21,6 +21,7 @@ import org.apache.ibatis.reflection.Reflector;
 
 /**
  * getter invoker.
+ *
  * @author Clinton Begin
  */
 public class GetFieldInvoker implements Invoker {
@@ -32,9 +33,12 @@ public class GetFieldInvoker implements Invoker {
 
   /**
    * {@inheritDoc}.
+   *
    * @param target
    * @param args
+   *
    * @return
+   *
    * @throws IllegalAccessException
    */
   @Override

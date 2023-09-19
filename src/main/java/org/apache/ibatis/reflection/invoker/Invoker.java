@@ -1,5 +1,5 @@
 /*
- *    Copyright 2009-2022 the original author or authors.
+ *    Copyright 2009-2023 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -18,17 +18,20 @@ package org.apache.ibatis.reflection.invoker;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * - {@link GetFieldInvoker} Get方法 invoker.
- * - {@link SetFieldInvoker} Set 方法 invoker.
- * - {@link MethodInvoker} 方法 invoker(排除了 getter,setter).
+ * - {@link GetFieldInvoker} Get方法 invoker. - {@link SetFieldInvoker} Set 方法 invoker. - {@link MethodInvoker} 方法
+ * invoker(排除了 getter,setter).
+ *
  * @author Clinton Begin
  */
 public interface Invoker {
   /**
    * 执行 Field 或 Method.
+   *
    * @param target
    * @param args
+   *
    * @return
+   *
    * @throws IllegalAccessException
    * @throws InvocationTargetException
    */
@@ -36,6 +39,7 @@ public interface Invoker {
 
   /**
    * 返回属性响应的类型.
+   *
    * @return
    */
   Class<?> getType();

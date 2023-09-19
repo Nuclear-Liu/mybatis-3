@@ -28,6 +28,7 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
  * 通过 {@link Reflector} 与 {@link ReflectorFactory} 的组合使用，实现对复杂的属性表达式的解析.
+ *
  * @author Clinton Begin
  */
 public class MetaClass {

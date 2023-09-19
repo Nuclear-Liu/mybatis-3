@@ -40,9 +40,24 @@ public class SqlSourceBuilder extends BaseBuilder {
     super(configuration);
   }
 
+  /**
+   * 执行sql解析
+   *
+   * @param originalSql
+   * @param parameterType
+   * @param additionalParameters
+   *
+   * @return
+   */
   public SqlSource parse(String originalSql, Class<?> parameterType, Map<String, Object> additionalParameters) {
+    /**
+     * 为参数构建 {@link ParameterMapping}
+     */
     ParameterMappingTokenHandler handler = new ParameterMappingTokenHandler(configuration, parameterType,
         additionalParameters);
+    /**
+     * 将 # 参数解析为 ? 占位符
+     */
     GenericTokenParser parser = new GenericTokenParser("#{", "}", handler);
     String sql;
     if (configuration.isShrinkWhitespacesInSql()) {

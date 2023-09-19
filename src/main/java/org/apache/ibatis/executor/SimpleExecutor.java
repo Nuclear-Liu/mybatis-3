@@ -102,6 +102,9 @@ public class SimpleExecutor extends BaseExecutor {
     /** 获取 jdbc 连接代理对象 */
     Connection connection = getConnection(statementLog);
     stmt = handler.prepare(connection, transaction.getTimeout());
+    /**
+     * 为 stmt 设置参数：如果是 {@link java.sql.PreparedStatement} 处理则会对对应的占位符赋值
+     */
     handler.parameterize(stmt);
     return stmt;
   }

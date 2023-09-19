@@ -23,6 +23,7 @@ import org.apache.ibatis.reflection.ReflectionException;
  * 属性名称工具类.
  * <p/>
  * 方法以<code>is</code> <code>get</code> <code>set</code> 开头：截取获得属性名，并将首字母小写.
+ *
  * @author Clinton Begin
  */
 public final class PropertyNamer {
@@ -33,7 +34,10 @@ public final class PropertyNamer {
 
   /**
    * 方法以<code>is</code> <code>get</code> <code>set</code> 开头：截取获得属性名，并将首字母小写.
-   * @param name 方法名
+   *
+   * @param name
+   *          方法名
+   *
    * @return
    */
   public static String methodToProperty(String name) {
@@ -67,7 +71,10 @@ public final class PropertyNamer {
 
   /**
    * 判断方法名称是否为属性.
-   * @param name 属性方法名
+   *
+   * @param name
+   *          属性方法名
+   *
    * @return
    */
   public static boolean isProperty(String name) {
@@ -76,7 +83,9 @@ public final class PropertyNamer {
 
   /**
    * 判断方法名称为获取器.
+   *
    * @param name
+   *
    * @return
    */
   public static boolean isGetter(String name) {
@@ -85,7 +94,9 @@ public final class PropertyNamer {
 
   /**
    * 判断方法名是否为设置器.
+   *
    * @param name
+   *
    * @return
    */
   public static boolean isSetter(String name) {

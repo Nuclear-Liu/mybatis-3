@@ -37,19 +37,50 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
 /**
+ * 对 {@link ResultSet} 做增强.
+ *
  * @author Iwao AVE!
  */
 public class ResultSetWrapper {
 
+  /**
+   * 被增强的 {@link ResultSet} 对象.
+   */
   private final ResultSet resultSet;
   private final TypeHandlerRegistry typeHandlerRegistry;
+  /**
+   * 记录 {@link ResultSet} 中每列的名称
+   */
   private final List<String> columnNames = new ArrayList<>();
+  /**
+   * 记录 {@link ResultSet} 中每列对应的 Java 类型
+   */
   private final List<String> classNames = new ArrayList<>();
+  /**
+   * 记录 {@link ResultSet} 中每列对应的 Jdbc 类型
+   */
   private final List<JdbcType> jdbcTypes = new ArrayList<>();
+  /**
+   * 记录 {@link ResultSet} 中每列对应具体的 {@link TypeHandler} 类型处理器； <code>key</code> 是列名
+   */
   private final Map<String, Map<Class<?>, TypeHandler<?>>> typeHandlerMap = new HashMap<>();
+  /**
+   * 记录 {@link ResultSet} 中被映射的列名(<code>key</code>)与映射对象属性名(<code>value</code>)对应关系
+   */
   private final Map<String, List<String>> mappedColumnNamesMap = new HashMap<>();
+  /**
+   * 记录 {@link ResultSet} 中未被映射的列名(<code>key</code>)与映射对象属性名(<code>value</code>)对应关系.
+   */
   private final Map<String, List<String>> unMappedColumnNamesMap = new HashMap<>();
 
+  /**
+   * 初始化属性.
+   *
+   * @param rs
+   * @param configuration
+   *
+   * @throws SQLException
+   */
   public ResultSetWrapper(ResultSet rs, Configuration configuration) throws SQLException {
     this.typeHandlerRegistry = configuration.getTypeHandlerRegistry();
     this.resultSet = rs;

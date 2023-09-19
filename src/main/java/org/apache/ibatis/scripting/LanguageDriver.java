@@ -46,6 +46,8 @@ public interface LanguageDriver {
   /**
    * Creates an {@link SqlSource} that will hold the statement read from a mapper xml file. It is called during startup,
    * when the mapped statement is read from a class or an xml file.
+   * <p/>
+   * 动态 SQL 加载解析；同时记录 sql 中的占位符 {@link org.apache.ibatis.mapping.ParameterMapping}
    *
    * @param configuration
    *          The MyBatis configuration

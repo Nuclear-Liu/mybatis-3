@@ -56,6 +56,20 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
     this.configuration = c;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @param ps
+   *          {@link PreparedStatement} 对象
+   * @param i
+   *          占位符位置
+   * @param parameter
+   *          参数值
+   * @param jdbcType
+   *          对应 JDBC 类型
+   *
+   * @throws SQLException
+   */
   @Override
   public void setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException {
     if (parameter == null) {
@@ -63,6 +77,9 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
         throw new TypeException("JDBC requires that the JdbcType must be specified for all nullable parameters.");
       }
       try {
+        /**
+         * 处理参数值为空的情况
+         */
         ps.setNull(i, jdbcType.TYPE_CODE);
       } catch (SQLException e) {
         throw new TypeException("Error setting null for parameter #" + i + " with JdbcType " + jdbcType + " . "
@@ -70,6 +87,9 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
             + "Cause: " + e, e);
       }
     } else {
+      /**
+       * 参数值不为空
+       */
       try {
         setNonNullParameter(ps, i, parameter, jdbcType);
       } catch (Exception e) {
@@ -110,6 +130,16 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
     }
   }
 
+  /**
+   * 设置非空参数值到指定参数位置.
+   *
+   * @param ps
+   * @param i
+   * @param parameter
+   * @param jdbcType
+   *
+   * @throws SQLException
+   */
   public abstract void setNonNullParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType)
       throws SQLException;
 

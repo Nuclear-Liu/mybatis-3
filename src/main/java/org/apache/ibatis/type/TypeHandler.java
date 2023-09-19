@@ -21,14 +21,39 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
+ * 类型处理器接口.
+ *
  * @author Clinton Begin
  */
 public interface TypeHandler<T> {
 
+  /**
+   * 将 Java 类型转换为 JDBC 类型.
+   * <p/>
+   * 操作的本质：占位赋值 <code>
+   *   String sql = "select id, user_name, real_name, password from t_user where id = ? and user_name = ?";
+   *   ps = conn.prepareStatement(sql);
+   *   ps.setInt(1,2);
+   *   ps.setString(2, "zhangsan");
+   * </code>
+   *
+   * @param ps
+   *          {@link PreparedStatement} 对象
+   * @param i
+   *          占位符位置
+   * @param parameter
+   *          参数值
+   * @param jdbcType
+   *          对应 JDBC 类型
+   *
+   * @throws SQLException
+   */
   void setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException;
 
   /**
    * Gets the result.
+   * <p/>
+   * 将 JDBC 类型转换为 Java 类型.
    *
    * @param rs
    *          the rs

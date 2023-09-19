@@ -26,6 +26,7 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
  * {@link Map} 集合包装器类.
+ *
  * @author Clinton Begin
  */
 public class MapWrapper extends BaseWrapper {

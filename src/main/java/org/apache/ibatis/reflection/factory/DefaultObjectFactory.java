@@ -35,6 +35,7 @@ import org.apache.ibatis.reflection.Reflector;
 
 /**
  * {@inheritDoc} 默认对象工厂
+ *
  * @author Clinton Begin
  */
 public class DefaultObjectFactory implements ObjectFactory, Serializable {
@@ -124,7 +125,9 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
 
   /**
    * 判断类型：如果是接口类型的话就返回对应额实现类.
+   *
    * @param type
+   *
    * @return
    */
   protected Class<?> resolveInterface(Class<?> type) {

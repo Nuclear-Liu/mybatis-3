@@ -21,6 +21,7 @@ import org.apache.ibatis.reflection.Reflector;
 
 /**
  * 属性拷贝工具类.
+ *
  * @author Clinton Begin
  */
 public final class PropertyCopier {
@@ -31,9 +32,13 @@ public final class PropertyCopier {
 
   /**
    * 将<code>sourceBean</code>对象属性拷贝到<code>destinationBean</code>对象.
-   * @param type 被拷贝属性所属类
-   * @param sourceBean 源对象
-   * @param destinationBean 目标对象
+   *
+   * @param type
+   *          被拷贝属性所属类
+   * @param sourceBean
+   *          源对象
+   * @param destinationBean
+   *          目标对象
    */
   public static void copyBeanProperties(Class<?> type, Object sourceBean, Object destinationBean) {
     Class<?> parent = type;

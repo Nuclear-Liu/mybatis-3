@@ -31,14 +31,13 @@ import java.util.Arrays;
  * 1. 解析字段类型{@link TypeParameterResolver#resolveFieldType(Field, Type)}；
  * 2.方法返回值类型{@link TypeParameterResolver#resolveReturnType(Method, Type)}；
  * 3.方法参数的类型{@link TypeParameterResolver#resolveParamTypes(Method, Type)}.
+ *
  * @author Iwao AVE!
  */
 public class TypeParameterResolver {
 
   /**
-   * Resolve field type.
-   *
-   * 解析字段类型.
+   * Resolve field type. 解析字段类型.
    *
    * @param field
    *          the field 需要解析的字段
@@ -64,9 +63,7 @@ public class TypeParameterResolver {
   }
 
   /**
-   * Resolve return type.
-   *
-   * 解析返回类型.
+   * Resolve return type. 解析返回类型.
    *
    * @param method
    *          the method 方法
@@ -89,9 +86,7 @@ public class TypeParameterResolver {
   }
 
   /**
-   * Resolve param types.
-   *
-   * 解析参数类型.
+   * Resolve param types. 解析参数类型.
    *
    * @param method
    *          the method
@@ -125,10 +120,10 @@ public class TypeParameterResolver {
   }
 
   /**
-   *
    * @param type
    * @param srcType
    * @param declaringClass
+   *
    * @return
    */
   private static Type resolveType(Type type, Type srcType, Class<?> declaringClass) {

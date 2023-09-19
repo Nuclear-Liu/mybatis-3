@@ -30,6 +30,7 @@ public class MethodInvoker implements Invoker {
 
   /**
    * 初始化 type 与 method 属性变量.
+   *
    * @param method
    */
   public MethodInvoker(Method method) {

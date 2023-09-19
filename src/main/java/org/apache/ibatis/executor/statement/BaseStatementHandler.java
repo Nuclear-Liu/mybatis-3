@@ -42,6 +42,9 @@ public abstract class BaseStatementHandler implements StatementHandler {
   protected final ObjectFactory objectFactory;
   protected final TypeHandlerRegistry typeHandlerRegistry;
   protected final ResultSetHandler resultSetHandler;
+  /**
+   * 参数处理器
+   */
   protected final ParameterHandler parameterHandler;
 
   protected final Executor executor;

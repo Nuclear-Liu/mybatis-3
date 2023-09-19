@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 /**
  * 属性分词器.
+ *
  * @author Clinton Begin
  */
 public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
@@ -41,6 +42,7 @@ public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
 
   /**
    * 分词实现.
+   *
    * @param fullname
    */
   public PropertyTokenizer(String fullname) {
