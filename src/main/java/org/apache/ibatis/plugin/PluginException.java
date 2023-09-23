@@ -18,6 +18,8 @@ package org.apache.ibatis.plugin;
 import org.apache.ibatis.exceptions.PersistenceException;
 
 /**
+ * 自定义插件异常.
+ *
  * @author Clinton Begin
  */
 public class PluginException extends PersistenceException {

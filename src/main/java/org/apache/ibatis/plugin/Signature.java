@@ -22,6 +22,8 @@ import java.lang.annotation.Target;
 
 /**
  * The annotation that indicate the method signature.
+ * <p/>
+ * 注解用于指出要拦截的方法的签名.
  *
  * @see Intercepts
  *

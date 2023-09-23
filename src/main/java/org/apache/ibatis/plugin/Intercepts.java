@@ -24,6 +24,8 @@ import java.lang.annotation.Target;
 // @formatter:off
 /**
  * The annotation that specify target methods to intercept.
+ * <p/>
+ * 注解用于指定要拦截的方法.
  * <p>
  * <b>How to use:</b>
  *
@@ -52,6 +54,8 @@ import java.lang.annotation.Target;
 public @interface Intercepts {
   /**
    * Returns method signatures to intercept.
+   * <p/>
+   * 返回要拦截的方法的签名.
    *
    * @return method signatures
    */

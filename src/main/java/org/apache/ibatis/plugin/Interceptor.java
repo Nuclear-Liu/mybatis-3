@@ -1,5 +1,5 @@
 /*
- *    Copyright 2009-2022 the original author or authors.
+ *    Copyright 2009-2023 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -18,16 +18,42 @@ package org.apache.ibatis.plugin;
 import java.util.Properties;
 
 /**
+ * 拦截器接口.
+ *
  * @author Clinton Begin
  */
 public interface Interceptor {
 
+  /**
+   * 执行拦截逻辑.
+   *
+   * @param invocation
+   *
+   * @return
+   *
+   * @throws Throwable
+   */
   Object intercept(Invocation invocation) throws Throwable;
 
+  /**
+   * 决定是否触发 {@link Interceptor#intercept(Invocation)} 方法.
+   *
+   * @param target
+   *
+   * @return
+   */
   default Object plugin(Object target) {
+    /**
+     * 拦截器装饰方法，对目标对象做增强.
+     */
     return Plugin.wrap(target, this);
   }
 
+  /**
+   * 根据 {@link Properties} 对象中的属性初始化 {@link Interceptor} 对象.
+   *
+   * @param properties
+   */
   default void setProperties(Properties properties) {
     // NOP
   }
