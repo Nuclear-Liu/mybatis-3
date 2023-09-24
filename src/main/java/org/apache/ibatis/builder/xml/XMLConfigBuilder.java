@@ -253,11 +253,26 @@ public class XMLConfigBuilder extends BaseBuilder {
   private void pluginElement(XNode parent) throws Exception {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
+        /**
+         * 获取 <code>plugin</code> 标签节点的 <code>interceptor</code> 属性值: 自定义拦截器类全路径.
+         */
         String interceptor = child.getStringAttribute("interceptor");
+        /**
+         * 获取配置 <code>plugin</code> 标签的属性子标签中配置的值.
+         */
         Properties properties = child.getChildrenAsProperties();
+        /**
+         * 获取自定义的 {@link Interceptor} 对象.
+         */
         Interceptor interceptorInstance = (Interceptor) resolveClass(interceptor).getDeclaredConstructor()
             .newInstance();
+        /**
+         * 设置自定义拦截器对象的属性.
+         */
         interceptorInstance.setProperties(properties);
+        /**
+         * 将自定义拦截器对象添加到 {@link Configuration#interceptorChain}.
+         */
         configuration.addInterceptor(interceptorInstance);
       }
     }

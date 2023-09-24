@@ -67,7 +67,8 @@ public class SimpleExecutor extends BaseExecutor {
     try {
       Configuration configuration = ms.getConfiguration();
       /**
-       * 默认创建的是: {@link PreparedStatementHandler} 同时完成 {@link org.apache.ibatis.executor.parameter.ParameterHandler}
+       * 创建 {@link StatementHandler} 实例，并完成插件增强. 默认创建的是: {@link PreparedStatementHandler} 同时完成
+       * {@link org.apache.ibatis.executor.parameter.ParameterHandler}
        * {@link org.apache.ibatis.executor.resultset.ResultSetHandler} 的实例化
        */
       StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler,

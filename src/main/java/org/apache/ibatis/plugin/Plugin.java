@@ -163,6 +163,16 @@ public class Plugin implements InvocationHandler {
     return signatureMap;
   }
 
+  /**
+   * 获取目标类型实现的所有接口.
+   *
+   * @param type
+   *          目标对象
+   * @param signatureMap
+   *          拦截器类与拦截方法
+   *
+   * @return
+   */
   private static Class<?>[] getAllInterfaces(Class<?> type, Map<Class<?>, Set<Method>> signatureMap) {
     Set<Class<?>> interfaces = new HashSet<>();
     while (type != null) {

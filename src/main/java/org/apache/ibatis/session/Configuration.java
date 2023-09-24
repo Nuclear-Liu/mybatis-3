@@ -55,6 +55,7 @@ import org.apache.ibatis.executor.loader.javassist.JavassistProxyFactory;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.resultset.DefaultResultSetHandler;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
+import org.apache.ibatis.executor.statement.PreparedStatementHandler;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.io.VFS;
@@ -732,6 +733,15 @@ public class Configuration {
     return MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
   }
 
+  /**
+   * 创建具体 {@link ParameterHandler} 并完成插件增强.
+   *
+   * @param mappedStatement
+   * @param parameterObject
+   * @param boundSql
+   *
+   * @return
+   */
   public ParameterHandler newParameterHandler(MappedStatement mappedStatement, Object parameterObject,
       BoundSql boundSql) {
     ParameterHandler parameterHandler = mappedStatement.getLang().createParameterHandler(mappedStatement,
@@ -740,6 +750,18 @@ public class Configuration {
     return (ParameterHandler) interceptorChain.pluginAll(parameterHandler);
   }
 
+  /**
+   * 创建具体 {@link ResultSetHandler} 并完成插件增强.
+   *
+   * @param executor
+   * @param mappedStatement
+   * @param rowBounds
+   * @param parameterHandler
+   * @param resultHandler
+   * @param boundSql
+   *
+   * @return
+   */
   public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, RowBounds rowBounds,
       ParameterHandler parameterHandler, ResultHandler resultHandler, BoundSql boundSql) {
     ResultSetHandler resultSetHandler = new DefaultResultSetHandler(executor, mappedStatement, parameterHandler,
@@ -749,6 +771,11 @@ public class Configuration {
   }
 
   /**
+   * 创建具体 {@link StatementHandler} 实例，并做使用拦截器做增强.
+   * <p/>
+   * 默认创建的是: {@link PreparedStatementHandler} 同时完成 {@link org.apache.ibatis.executor.parameter.ParameterHandler}
+   * {@link org.apache.ibatis.executor.resultset.ResultSetHandler} 的实例化.
+   *
    * @param executor
    * @param mappedStatement
    * @param parameterObject
@@ -804,7 +831,9 @@ public class Configuration {
       /* 装饰器模式：添加缓存增强 */
       executor = new CachingExecutor(executor);
     }
-    /* 拦截器：植入增强逻辑 */
+    /**
+     * 拦截器：植入增强逻辑
+     */
     return (Executor) interceptorChain.pluginAll(executor);
   }
 
@@ -951,6 +980,11 @@ public class Configuration {
     return sqlFragments;
   }
 
+  /**
+   * 将自定义拦截器添加到拦截器链.
+   *
+   * @param interceptor
+   */
   public void addInterceptor(Interceptor interceptor) {
     interceptorChain.addInterceptor(interceptor);
   }

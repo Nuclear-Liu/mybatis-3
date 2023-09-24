@@ -41,6 +41,9 @@ public abstract class BaseStatementHandler implements StatementHandler {
   protected final Configuration configuration;
   protected final ObjectFactory objectFactory;
   protected final TypeHandlerRegistry typeHandlerRegistry;
+  /**
+   * 结果集处理器
+   */
   protected final ResultSetHandler resultSetHandler;
   /**
    * 参数处理器
@@ -70,7 +73,9 @@ public abstract class BaseStatementHandler implements StatementHandler {
 
     this.boundSql = boundSql;
 
-    /* 处理参数填充 */
+    /**
+     * 设置参数处理器
+     */
     this.parameterHandler = configuration.newParameterHandler(mappedStatement, parameterObject, boundSql);
     /* 处理结果集封装到对象 */
     this.resultSetHandler = configuration.newResultSetHandler(executor, mappedStatement, rowBounds, parameterHandler,

@@ -45,6 +45,8 @@ public interface Interceptor {
   default Object plugin(Object target) {
     /**
      * 拦截器装饰方法，对目标对象做增强.
+     * <p/>
+     * 返回结果可能是拦截器对象(目标对象代理)或原始目标对象.
      */
     return Plugin.wrap(target, this);
   }
